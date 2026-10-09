@@ -1,0 +1,107 @@
+<script setup lang="ts">
+import { Head, useForm } from '@inertiajs/vue3';
+import { Truck } from '@lucide/vue';
+import SupplierController from '@/actions/App/Http/Controllers/Pharmacy/SupplierController';
+import InputError from '@/components/InputError.vue';
+import PageHeader from '@/components/PageHeader.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { index } from '@/routes/suppliers';
+import type { Supplier } from '@/types';
+
+defineOptions({
+    layout: { breadcrumbs: [{ title: 'Suppliers', href: index() }] },
+});
+
+defineProps<{ suppliers: Supplier[] }>();
+
+const form = useForm({ name: '', tin: '', phone: '', email: '', address: '' });
+const submit = () =>
+    form.post(SupplierController.store.url(), {
+        preserveScroll: true,
+        onSuccess: () => form.reset(),
+    });
+</script>
+
+<template>
+    <Head title="Suppliers" />
+
+    <div class="flex flex-col gap-5 p-4 md:p-6">
+        <PageHeader
+            title="Suppliers"
+            description="Wholesalers you receive stock from."
+            :icon="Truck"
+            tone="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300"
+        />
+
+        <form
+            class="grid gap-3 rounded-xl border border-orange-200 bg-orange-50/50 p-4 sm:grid-cols-6 dark:border-orange-500/30 dark:bg-orange-500/5"
+            novalidate
+            @submit.prevent="submit"
+        >
+            <div class="grid gap-1.5 sm:col-span-2">
+                <Label for="name">Name</Label>
+                <Input id="name" v-model="form.name" />
+                <InputError :message="form.errors.name" />
+            </div>
+            <div class="grid gap-1.5">
+                <Label for="tin">TIN</Label>
+                <Input id="tin" v-model="form.tin" />
+            </div>
+            <div class="grid gap-1.5">
+                <Label for="phone">Phone</Label>
+                <Input id="phone" v-model="form.phone" />
+            </div>
+            <div class="grid gap-1.5">
+                <Label for="email">Email</Label>
+                <Input id="email" v-model="form.email" />
+                <InputError :message="form.errors.email" />
+            </div>
+            <div class="flex items-end">
+                <Button
+                    :disabled="form.processing"
+                    class="w-full bg-orange-600 hover:bg-orange-700"
+                    >Add supplier</Button
+                >
+            </div>
+        </form>
+
+        <div class="rounded-xl border bg-card">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>TIN</TableHead>
+                        <TableHead>Phone</TableHead>
+                        <TableHead>Email</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow v-if="!suppliers.length">
+                        <TableCell
+                            colspan="4"
+                            class="py-10 text-center text-muted-foreground"
+                        >
+                            Add a supplier above before receiving stock.
+                        </TableCell>
+                    </TableRow>
+                    <TableRow v-for="s in suppliers" :key="s.id">
+                        <TableCell class="font-medium">{{ s.name }}</TableCell>
+                        <TableCell>{{ s.tin }}</TableCell>
+                        <TableCell>{{ s.phone }}</TableCell>
+                        <TableCell>{{ s.email }}</TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+        </div>
+    </div>
+</template>

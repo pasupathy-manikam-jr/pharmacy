@@ -1,0 +1,193 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans:
+        Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Bricolage Grotesque', Figtree, ui-sans-serif, sans-serif;
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--border, currentColor);
+    }
+}
+
+@layer utilities {
+    body,
+    html {
+        --font-sans:
+            Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+            'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    }
+}
+
+:root {
+    /* Teal-emerald brand on a faint mint canvas; deep teal sidebar. */
+    --background: hsl(160 33% 98.5%);
+    --foreground: hsl(190 40% 10%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(190 40% 10%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(190 40% 10%);
+    --primary: hsl(166 76% 32%);
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(262 83% 96%);
+    --secondary-foreground: hsl(262 60% 35%);
+    --muted: hsl(165 25% 94%);
+    --muted-foreground: hsl(190 12% 40%);
+    --accent: hsl(166 60% 93%);
+    --accent-foreground: hsl(170 70% 20%);
+    --destructive: hsl(350 80% 55%);
+    --destructive-foreground: hsl(0 0% 100%);
+    --border: hsl(165 22% 88%);
+    --input: hsl(165 20% 84%);
+    --ring: hsl(166 76% 36%);
+    --chart-1: hsl(166 76% 36%);
+    --chart-2: hsl(262 75% 58%);
+    --chart-3: hsl(38 92% 50%);
+    --chart-4: hsl(199 89% 48%);
+    --chart-5: hsl(340 80% 58%);
+    --radius: 0.75rem;
+    --sidebar-background: hsl(185 60% 14%);
+    --sidebar-foreground: hsl(170 30% 88%);
+    --sidebar-primary: hsl(160 84% 45%);
+    --sidebar-primary-foreground: hsl(185 60% 10%);
+    --sidebar-accent: hsl(182 50% 21%);
+    --sidebar-accent-foreground: hsl(0 0% 100%);
+    --sidebar-border: hsl(183 45% 20%);
+    --sidebar-ring: hsl(160 84% 45%);
+    --sidebar: hsl(185 60% 14%);
+}
+
+.dark {
+    --background: hsl(195 35% 7%);
+    --foreground: hsl(165 20% 94%);
+    --card: hsl(195 30% 10%);
+    --card-foreground: hsl(165 20% 94%);
+    --popover: hsl(195 30% 10%);
+    --popover-foreground: hsl(165 20% 94%);
+    --primary: hsl(160 75% 45%);
+    --primary-foreground: hsl(190 50% 8%);
+    --secondary: hsl(262 35% 20%);
+    --secondary-foreground: hsl(262 90% 88%);
+    --muted: hsl(195 25% 15%);
+    --muted-foreground: hsl(180 10% 65%);
+    --accent: hsl(170 40% 16%);
+    --accent-foreground: hsl(160 70% 80%);
+    --destructive: hsl(350 75% 58%);
+    --destructive-foreground: hsl(0 0% 100%);
+    --border: hsl(190 25% 18%);
+    --input: hsl(190 25% 20%);
+    --ring: hsl(160 75% 45%);
+    --chart-1: hsl(160 75% 45%);
+    --chart-2: hsl(262 80% 70%);
+    --chart-3: hsl(38 92% 58%);
+    --chart-4: hsl(199 89% 60%);
+    --chart-5: hsl(340 80% 65%);
+    --sidebar-background: hsl(195 40% 5%);
+    --sidebar-foreground: hsl(170 25% 85%);
+    --sidebar-primary: hsl(160 75% 45%);
+    --sidebar-primary-foreground: hsl(190 50% 8%);
+    --sidebar-accent: hsl(190 35% 12%);
+    --sidebar-accent-foreground: hsl(0 0% 100%);
+    --sidebar-border: hsl(190 30% 12%);
+    --sidebar-ring: hsl(160 75% 45%);
+    --sidebar: hsl(195 40% 5%);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+    }
+    td,
+    .tabular {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+@media print {
+    /* Receipts and registers print without app chrome. */
+    .no-print,
+    [data-sidebar],
+    header {
+        display: none !important;
+    }
+    body {
+        background: white;
+    }
+}
