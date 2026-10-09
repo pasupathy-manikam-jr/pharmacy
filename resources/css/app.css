@@ -180,6 +180,18 @@
     }
 }
 
+/* Row actions stay visible at the right edge while a wide table scrolls sideways. */
+.col-action {
+    position: sticky;
+    right: 0;
+    background: var(--card);
+    box-shadow: -1px 0 0 var(--border);
+}
+th.col-action {
+    z-index: 20;
+    background: var(--muted);
+}
+
 @media print {
     /* Receipts and registers print without app chrome. */
     .no-print,

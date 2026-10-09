@@ -172,6 +172,13 @@ class OperationsHttpTest extends TestCase
         Mail::assertSent(StockDigest::class, fn (StockDigest $m) => $m->hasTo('owner@pharmacy.test') && count($m->low) > 0);
     }
 
+    public function test_per_page_accepts_only_offered_sizes(): void
+    {
+        $this->get(route('products.index', ['per_page' => 10]))->assertInertia(fn ($p) => $p->where('products.per_page', 10)->has('products.data', 10));
+        $this->get(route('products.index', ['per_page' => 5000]))->assertInertia(fn ($p) => $p->where('products.per_page', 20));
+        $this->get(route('products.index', ['per_page' => 10, 'page' => 2]))->assertInertia(fn ($p) => $p->where('products.prev_page_url', fn ($url) => str_contains((string) $url, 'per_page=10')));
+    }
+
     public function test_goods_receipt_listing_still_works(): void
     {
         $this->get(route('receipts.index'))->assertOk();

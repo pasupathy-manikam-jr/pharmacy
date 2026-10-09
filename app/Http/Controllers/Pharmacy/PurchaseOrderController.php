@@ -9,6 +9,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderLine;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Support\PerPage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +29,8 @@ class PurchaseOrderController extends Controller
                 ->select('purchase_orders.*')
                 ->addSelect(['total_sen' => PurchaseOrderLine::query()->selectRaw('COALESCE(SUM(qty * cost_sen), 0)')->whereColumn('purchase_order_id', 'purchase_orders.id')])
                 ->latest('id')
-                ->paginate(25),
+                ->paginate(PerPage::get())
+                ->withQueryString(),
         ]);
     }
 

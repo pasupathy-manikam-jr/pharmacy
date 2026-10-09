@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Support\PerPage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -24,7 +25,8 @@ class GoodsReceiptController extends Controller
                 ->with('supplier:id,name')
                 ->withCount('lines')
                 ->latest()
-                ->paginate(25),
+                ->paginate(PerPage::get())
+                ->withQueryString(),
         ]);
     }
 

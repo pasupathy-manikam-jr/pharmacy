@@ -6,6 +6,9 @@ import CustomerController from '@/actions/App/Http/Controllers/Pharmacy/Customer
 import DatePicker from '@/components/DatePicker.vue';
 import InputError from '@/components/InputError.vue';
 import Pagination from '@/components/Pagination.vue';
+import ViewToggle from '@/components/ViewToggle.vue';
+import { useInitials } from '@/composables/useInitials';
+import { useViewMode } from '@/composables/useViewMode';
 import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +39,16 @@ defineOptions({
 const props = defineProps<{ customers: Paginated<Customer>; search: string }>();
 
 const q = ref(props.search);
+const view = useViewMode('customers');
+const { getInitials } = useInitials();
+const tints = [
+    'bg-pink-100 text-pink-700',
+    'bg-violet-100 text-violet-700',
+    'bg-sky-100 text-sky-700',
+    'bg-amber-100 text-amber-800',
+    'bg-emerald-100 text-emerald-700',
+    'bg-indigo-100 text-indigo-700',
+];
 const search = () =>
     router.get(
         index().url,
@@ -79,6 +92,7 @@ const submit = () =>
                     placeholder="Name, IC or phone"
                 />
             </form>
+            <ViewToggle v-model="view" />
         </PageHeader>
 
         <form
@@ -141,7 +155,7 @@ const submit = () =>
             </div>
         </form>
 
-        <div class="rounded-xl border bg-card">
+        <div v-if="view === 'list'" class="rounded-xl border bg-card">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -183,6 +197,43 @@ const submit = () =>
                     </TableRow>
                 </TableBody>
             </Table>
+        </div>
+        <div
+            v-if="view === 'grid'"
+            class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+        >
+            <p
+                v-if="!customers.data.length"
+                class="col-span-full rounded-xl border border-dashed p-10 text-center text-muted-foreground"
+            >
+                No customers found.
+            </p>
+            <Link
+                v-for="c in customers.data"
+                :key="c.id"
+                :href="show(c.id)"
+                class="flex gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-pink-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none dark:hover:border-pink-500/50"
+            >
+                <span
+                    :class="[
+                        'flex size-11 shrink-0 items-center justify-center rounded-full font-semibold',
+                        tints[c.id % tints.length],
+                    ]"
+                    >{{ getInitials(c.name) }}</span
+                >
+                <div class="min-w-0 flex-1">
+                    <h2 class="truncate font-semibold">{{ c.name }}</h2>
+                    <p class="text-sm text-muted-foreground">
+                        {{ c.ic_no ?? 'No MyKad' }}
+                    </p>
+                    <p class="text-sm text-muted-foreground">{{ c.phone }}</p>
+                    <span
+                        v-if="c.allergies"
+                        class="mt-2 inline-block rounded-md bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-700 dark:bg-rose-500/20 dark:text-rose-300"
+                        >Allergic: {{ c.allergies }}</span
+                    >
+                </div>
+            </Link>
         </div>
         <Pagination :page="customers" />
     </div>

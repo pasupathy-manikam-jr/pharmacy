@@ -66,6 +66,20 @@ class DatabaseSeeder extends Seeder
             ['Piriton', 'Chlorphenamine', '4 mg', 'Tablet', PoisonGroup::C, '9556000000066', 0.25, 50],
             ['Uphamol Cough Syrup', 'Dextromethorphan', '15 mg/5 ml', 'Syrup', PoisonGroup::D, '9556000000073', 9.90, 10],
             ['Blackmores Vitamin C', 'Ascorbic acid', '1000 mg', 'Tablet', PoisonGroup::None, '9556000000080', 1.10, 40],
+            ['Gaviscon Double Action', 'Sodium alginate', '', 'Suspension', PoisonGroup::None, '9556000000097', 24.90, 6],
+            ['Zyrtec', 'Cetirizine', '10 mg', 'Tablet', PoisonGroup::C, '9556000000103', 1.60, 40],
+            ['Voltaren Emulgel', 'Diclofenac', '1%', 'Gel', PoisonGroup::C, '9556000000110', 32.50, 5],
+            ['Ponstan', 'Mefenamic acid', '250 mg', 'Capsule', PoisonGroup::B, '9556000000127', 0.90, 40],
+            ['Glucophage', 'Metformin', '500 mg', 'Tablet', PoisonGroup::B, '9556000000134', 0.45, 100],
+            ['Norvasc', 'Amlodipine', '5 mg', 'Tablet', PoisonGroup::B, '9556000000141', 1.95, 60],
+            ['Lipitor', 'Atorvastatin', '20 mg', 'Tablet', PoisonGroup::B, '9556000000158', 3.40, 60],
+            ['Xanax', 'Alprazolam', '0.25 mg', 'Tablet', PoisonGroup::Psychotropic, '9556000000165', 1.50, 20],
+            ['Dettol Antiseptic', 'Chloroxylenol', '4.8%', 'Liquid', PoisonGroup::None, '9556000000172', 12.90, 8],
+            ['Salonpas', 'Methyl salicylate', '', 'Patch', PoisonGroup::None, '9556000000189', 9.50, 10],
+            ['Oral Rehydration Salts', 'ORS', '', 'Sachet', PoisonGroup::None, '9556000000196', 1.20, 30],
+            ['Eurax Cream', 'Crotamiton', '10%', 'Cream', PoisonGroup::None, '9556000000202', 15.80, 4],
+            ['Accu-Chek Test Strips', 'Glucose test strips', '50s', 'Box', PoisonGroup::None, '9556000000219', 68.00, 3],
+            ['Omron Face Mask', 'Surgical mask', '50s', 'Box', PoisonGroup::None, '9556000000226', 18.00, 5],
         ];
 
         $products = collect($catalogue)->map(fn ($p) => Product::query()->create([
@@ -93,6 +107,11 @@ class DatabaseSeeder extends Seeder
         Customer::query()->create(['name' => 'Klinik Harmoni Sdn Bhd', 'tin' => 'C20880099010', 'brn' => '201501012345', 'phone' => '03-2142 1111', 'address' => '8 Jalan Ampang, Kuala Lumpur', 'email' => 'accounts@harmoni.test']);
 
         $this->demoTrading($branch, $products->keyBy('name')->all(), $tan, $supplier);
+
+        // A month of backdated trading for a lived-in demo. Tests assert against the lean data above, so they skip it.
+        if (! app()->runningUnitTests()) {
+            $this->call(DemoHistorySeeder::class);
+        }
     }
 
     /**

@@ -139,7 +139,7 @@ const tone = (days: number) =>
                         <TableHead class="text-right">On hand</TableHead>
                         <TableHead class="text-right">Unit cost</TableHead>
                         <TableHead class="text-right">Value</TableHead>
-                        <TableHead v-if="canAdjust" />
+                        <TableHead v-if="canAdjust" class="col-action" />
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -184,6 +184,17 @@ const tone = (days: number) =>
                         <TableCell class="text-right">{{
                             rm(l.cost_sen * l.qty)
                         }}</TableCell>
+                        <TableCell
+                            v-if="canAdjust"
+                            class="col-action text-right"
+                        >
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                @click="startAdjust(l)"
+                                ><SlidersHorizontal /> Adjust</Button
+                            >
+                        </TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

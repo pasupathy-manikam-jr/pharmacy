@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pharmacy;
 
 use App\Http\Controllers\Controller;
 use App\Models\Prescription;
+use App\Support\PerPage;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,7 +24,7 @@ class PrescriptionController extends Controller
                 ->with('customer:id,name,ic_no')
                 ->withCount(['sales' => fn ($q) => $q->where('status', '!=', 'refunded')])
                 ->latest('id')
-                ->paginate(25)
+                ->paginate(PerPage::get())
                 ->withQueryString(),
             'search' => $search,
         ]);

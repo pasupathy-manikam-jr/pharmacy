@@ -10,6 +10,7 @@ use App\Models\Branch;
 use App\Models\StockLevel;
 use App\Models\StockMovement;
 use App\Models\User;
+use App\Support\PerPage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -33,7 +34,7 @@ class StockController extends Controller
                 ->orderBy('products.name')
                 ->orderBy('batches.expiry_date')
                 ->with('batch.product:id,name,strength,unit')
-                ->paginate(50)
+                ->paginate(PerPage::get())
                 ->withQueryString()
                 ->through(fn (StockLevel $l) => [
                     'id' => $l->id,
@@ -83,7 +84,7 @@ class StockController extends Controller
                 ->when($type, fn ($q) => $q->where('type', $type))
                 ->with(['batch:id,batch_no,product_id', 'batch.product:id,name,strength'])
                 ->latest('id')
-                ->paginate(50)
+                ->paginate(PerPage::get())
                 ->withQueryString(),
             'type' => $type,
         ]);

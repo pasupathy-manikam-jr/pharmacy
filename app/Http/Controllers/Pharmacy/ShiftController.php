@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Shift;
 use App\Models\User;
+use App\Support\PerPage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -28,7 +29,8 @@ class ShiftController extends Controller
                 ->whereNotNull('closed_at')
                 ->with('user:id,name')
                 ->latest('id')
-                ->paginate(20),
+                ->paginate(PerPage::get())
+                ->withQueryString(),
         ]);
     }
 

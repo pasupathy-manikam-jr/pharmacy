@@ -6,6 +6,7 @@ use App\Enums\PoisonGroup;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Product;
+use App\Support\PerPage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -25,7 +26,7 @@ class ProductController extends Controller
                     ->orWhere('generic_name', 'like', "%$search%")
                     ->orWhere('barcode', $search)))
                 ->orderBy('name')
-                ->paginate(25)
+                ->paginate(PerPage::get())
                 ->withQueryString(),
             'search' => $search,
         ]);

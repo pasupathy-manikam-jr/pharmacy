@@ -10,6 +10,7 @@ use App\Models\Prescription;
 use App\Models\Sale;
 use App\Models\Shift;
 use App\Models\User;
+use App\Support\PerPage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -26,7 +27,7 @@ class CustomerController extends Controller
             'customers' => Customer::query()
                 ->when($search, fn ($q) => $q->where(fn ($q) => $q->where('name', 'like', "%$search%")->orWhere('ic_no', 'like', "$search%")->orWhere('phone', 'like', "%$search%")))
                 ->orderBy('name')
-                ->paginate(25)
+                ->paginate(PerPage::get())
                 ->withQueryString(),
             'search' => $search,
         ]);

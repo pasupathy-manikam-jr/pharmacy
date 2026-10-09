@@ -4,6 +4,8 @@ import { Truck } from '@lucide/vue';
 import SupplierController from '@/actions/App/Http/Controllers/Pharmacy/SupplierController';
 import InputError from '@/components/InputError.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import ViewToggle from '@/components/ViewToggle.vue';
+import { useViewMode } from '@/composables/useViewMode';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +26,8 @@ defineOptions({
 
 defineProps<{ suppliers: Supplier[] }>();
 
+const view = useViewMode('suppliers', 'grid');
+
 const form = useForm({ name: '', tin: '', phone: '', email: '', address: '' });
 const submit = () =>
     form.post(SupplierController.store.url(), {
@@ -41,7 +45,9 @@ const submit = () =>
             description="Wholesalers you receive stock from."
             :icon="Truck"
             tone="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300"
-        />
+        >
+            <ViewToggle v-model="view" />
+        </PageHeader>
 
         <form
             class="grid gap-3 rounded-xl border border-orange-200 bg-orange-50/50 p-4 sm:grid-cols-6 dark:border-orange-500/30 dark:bg-orange-500/5"
@@ -75,7 +81,7 @@ const submit = () =>
             </div>
         </form>
 
-        <div class="rounded-xl border bg-card">
+        <div v-if="view === 'list'" class="rounded-xl border bg-card">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -102,6 +108,37 @@ const submit = () =>
                     </TableRow>
                 </TableBody>
             </Table>
+        </div>
+        <div
+            v-if="view === 'grid'"
+            class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
+            <p
+                v-if="!suppliers.length"
+                class="col-span-full rounded-xl border border-dashed p-10 text-center text-muted-foreground"
+            >
+                Add a supplier above before receiving stock.
+            </p>
+            <section
+                v-for="s in suppliers"
+                :key="s.id"
+                class="rounded-xl border border-l-4 border-l-orange-500 bg-card p-4"
+            >
+                <h2 class="font-semibold">{{ s.name }}</h2>
+                <p v-if="s.tin" class="text-sm text-muted-foreground">
+                    TIN {{ s.tin }}
+                </p>
+                <p class="mt-2 text-sm">{{ s.phone }}</p>
+                <a
+                    v-if="s.email"
+                    :href="`mailto:${s.email}`"
+                    class="text-sm text-orange-700 hover:underline dark:text-orange-300"
+                    >{{ s.email }}</a
+                >
+                <p v-if="s.address" class="mt-1 text-sm text-muted-foreground">
+                    {{ s.address }}
+                </p>
+            </section>
         </div>
     </div>
 </template>

@@ -8,6 +8,7 @@ use App\Models\Refund;
 use App\Models\Sale;
 use App\Models\User;
 use App\Support\EInvoiceSummary;
+use App\Support\PerPage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -24,8 +25,9 @@ class SaleController extends Controller
                 ->where('branch_id', $request->user()?->branch_id)
                 ->when($search, fn ($q) => $q->where('number', 'like', "%$search%"))
                 ->with(['customer:id,name', 'user:id,name'])
+                ->latest()
                 ->latest('id')
-                ->paginate(25)
+                ->paginate(PerPage::get())
                 ->withQueryString(),
             'search' => $search,
         ]);

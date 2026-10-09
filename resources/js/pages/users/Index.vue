@@ -167,7 +167,7 @@ function saveEdit() {
                         <TableHead>Name</TableHead>
                         <TableHead>Email</TableHead>
                         <TableHead>Role</TableHead>
-                        <TableHead />
+                        <TableHead class="col-action" />
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -191,7 +191,7 @@ function saveEdit() {
                                 >{{ roleInfo[u.role].label }}</span
                             >
                         </TableCell>
-                        <TableCell class="text-right">
+                        <TableCell class="col-action text-right">
                             <Button
                                 variant="ghost"
                                 size="sm"
