@@ -67,6 +67,7 @@ const submit = () =>
         @submit.prevent="submit"
     >
         <PageHeader
+            :back="{ href: stock(), label: 'stock' }"
             title="Transfer stock"
             description="Send batches to another branch. Expiry dates travel with the batch."
             :icon="ArrowLeftRight"

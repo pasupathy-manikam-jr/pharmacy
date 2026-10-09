@@ -34,6 +34,7 @@ const errors = () => {
 
     <div class="flex max-w-3xl flex-col gap-5 p-4 md:p-6">
         <PageHeader
+            :back="{ href: index(), label: 'products' }"
             title="Import products"
             description="Add or update many products at once from a spreadsheet saved as CSV."
             :icon="FileUp"

@@ -95,6 +95,7 @@ watch(t, (v) =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
+            :back="{ href: stock(), label: 'stock' }"
             title="Stock movements"
             description="Every change to stock, newest first. Nothing here can be edited."
             :icon="History"

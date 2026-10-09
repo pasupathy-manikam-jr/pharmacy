@@ -87,6 +87,7 @@ const submit = () =>
         @submit.prevent="submit"
     >
         <PageHeader
+            :back="{ href: index(), label: 'purchase orders' }"
             title="New purchase order"
             :description="
                 suggested.length

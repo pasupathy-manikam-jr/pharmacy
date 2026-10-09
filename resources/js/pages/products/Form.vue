@@ -104,6 +104,7 @@ function submit() {
 
     <div class="flex max-w-3xl flex-col gap-6 p-4 md:p-6">
         <PageHeader
+            :back="{ href: index(), label: 'products' }"
             :title="p ? `Edit ${p.name}` : 'Add product'"
             description="Prices are per unit, including the smallest unit you sell."
             :icon="Pill"

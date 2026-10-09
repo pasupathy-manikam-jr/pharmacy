@@ -2,6 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { PackageOpen, Printer, Send, XCircle } from '@lucide/vue';
 import PurchaseOrderController from '@/actions/App/Http/Controllers/Pharmacy/PurchaseOrderController';
+import BackButton from '@/components/BackButton.vue';
 import { Button } from '@/components/ui/button';
 import { formatDate, rm } from '@/lib/money';
 import { index } from '@/routes/purchase-orders';
@@ -52,6 +53,7 @@ const total = () =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <div class="no-print flex flex-wrap gap-2">
+            <BackButton :href="index()" label="purchase orders" />
             <Button
                 v-if="order.status === 'draft'"
                 class="bg-blue-600 hover:bg-blue-700"

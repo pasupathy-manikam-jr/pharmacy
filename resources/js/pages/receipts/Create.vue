@@ -121,6 +121,7 @@ function submit() {
         @submit.prevent="submit"
     >
         <PageHeader
+            :back="{ href: index(), label: 'goods received' }"
             title="Receive stock"
             :description="
                 order

@@ -5,6 +5,7 @@ import { computed, ref } from 'vue';
 import EInvoiceController from '@/actions/App/Http/Controllers/Pharmacy/EInvoiceController';
 import SaleController from '@/actions/App/Http/Controllers/Pharmacy/SaleController';
 import type { EInvoiceSummary } from '@/components/EInvoicePanel.vue';
+import BackButton from '@/components/BackButton.vue';
 import EInvoicePanel from '@/components/EInvoicePanel.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -143,6 +144,7 @@ const errors = computed(() => form.errors as Record<string, string>);
         <div
             class="no-print flex w-full max-w-xl flex-wrap justify-center gap-2"
         >
+            <BackButton :href="index()" label="sales" />
             <Button class="bg-sky-600 hover:bg-sky-700" @click="print"
                 ><Printer /> Print receipt</Button
             >
