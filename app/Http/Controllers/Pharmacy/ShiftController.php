@@ -7,6 +7,7 @@ use App\Models\AuditLog;
 use App\Models\Shift;
 use App\Models\User;
 use App\Support\PerPage;
+use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -20,15 +21,17 @@ class ShiftController extends Controller
         /** @var User $user */
         $user = $request->user();
         $current = Shift::openFor($user);
+        $history = Shift::query()->select('shifts.*')->join('users', 'users.id', '=', 'shifts.user_id');
+        $sort = Sort::apply($history, ['opened_at' => 'shifts.opened_at', 'closed_at' => 'shifts.closed_at', 'staff' => 'users.name', 'expected' => 'shifts.expected_cash_sen', 'counted' => 'shifts.counted_cash_sen', 'variance' => '(shifts.counted_cash_sen - shifts.expected_cash_sen)'], 'opened_at', 'desc', 'shifts.id');
 
         return Inertia::render('shifts/Index', [
             'current' => $current ? [...$current->toArray(), 'summary' => $current->cashSummary()] : null,
-            'history' => Shift::query()
-                ->where('branch_id', $user->branch_id)
-                ->when(! $user->hasAnyRole(['owner', 'pharmacist']), fn ($q) => $q->where('user_id', $user->id))
-                ->whereNotNull('closed_at')
+            'sort' => $sort,
+            'history' => $history
+                ->where('shifts.branch_id', $user->branch_id)
+                ->when(! $user->hasAnyRole(['owner', 'pharmacist']), fn ($q) => $q->where('shifts.user_id', $user->id))
+                ->whereNotNull('shifts.closed_at')
                 ->with('user:id,name')
-                ->latest('id')
                 ->paginate(PerPage::get())
                 ->withQueryString(),
         ]);

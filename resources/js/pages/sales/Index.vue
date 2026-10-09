@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ReceiptText, Search } from '@lucide/vue';
 import Pagination from '@/components/Pagination.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import {
     Table,
     TableBody,
@@ -15,7 +16,7 @@ import {
 } from '@/components/ui/table';
 import { formatDateTime, rm } from '@/lib/money';
 import { index, show } from '@/routes/sales';
-import type { Paginated } from '@/types';
+import type { Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Sales', href: index() }] },
@@ -32,7 +33,11 @@ type SaleRow = {
     user: { name: string };
 };
 
-const props = defineProps<{ sales: Paginated<SaleRow>; search: string }>();
+const props = defineProps<{
+    sort: SortState;
+    sales: Paginated<SaleRow>;
+    search: string;
+}>();
 
 const q = ref(props.search);
 const submit = () =>
@@ -82,12 +87,27 @@ const methodLabel: Record<string, string> = {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Receipt</TableHead>
-                        <TableHead>When</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Cashier</TableHead>
-                        <TableHead>Paid by</TableHead>
-                        <TableHead class="text-right">Total</TableHead>
+                        <SortableHead name="number" :sort="sort"
+                            >Receipt</SortableHead
+                        >
+                        <SortableHead name="created_at" :sort="sort"
+                            >When</SortableHead
+                        >
+                        <SortableHead name="customer" :sort="sort"
+                            >Customer</SortableHead
+                        >
+                        <SortableHead name="cashier" :sort="sort"
+                            >Cashier</SortableHead
+                        >
+                        <SortableHead name="payment_method" :sort="sort"
+                            >Paid by</SortableHead
+                        >
+                        <SortableHead
+                            name="total_sen"
+                            :sort="sort"
+                            align="right"
+                            >Total</SortableHead
+                        >
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -122,14 +142,10 @@ const methodLabel: Record<string, string> = {
                         <TableCell>{{ s.user.name }}</TableCell>
                         <TableCell
                             :class="[
-                                'font-medium capitalize',
+                                'font-medium',
                                 methodTone[s.payment_method],
                             ]"
-                            >{{
-                                s.payment_method === 'ewallet'
-                                    ? 'E-wallet'
-                                    : s.payment_method
-                            }}</TableCell
+                            >{{ methodLabel[s.payment_method] }}</TableCell
                         >
                         <TableCell class="text-right font-semibold">{{
                             rm(s.total_sen)

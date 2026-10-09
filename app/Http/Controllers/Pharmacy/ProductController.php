@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Product;
 use App\Support\PerPage;
+use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -18,14 +19,16 @@ class ProductController extends Controller
     public function index(Request $request): Response
     {
         $search = (string) $request->string('search');
+        $query = Product::query();
+        $sort = Sort::apply($query, ['name' => 'name', 'generic_name' => 'generic_name', 'poison_group' => 'poison_group', 'barcode' => 'barcode', 'price_sen' => 'price_sen', 'reorder_level' => 'reorder_level'], 'name', tieBreaker: 'id');
 
         return Inertia::render('products/Index', [
-            'products' => Product::query()
+            'sort' => $sort,
+            'products' => $query
                 ->when($search, fn ($q) => $q->where(fn ($q) => $q
                     ->where('name', 'like', "%$search%")
                     ->orWhere('generic_name', 'like', "%$search%")
                     ->orWhere('barcode', $search)))
-                ->orderBy('name')
                 ->paginate(PerPage::get())
                 ->withQueryString(),
             'search' => $search,

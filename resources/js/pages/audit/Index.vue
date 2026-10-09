@@ -3,6 +3,7 @@ import { Head, router } from '@inertiajs/vue3';
 import { History } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import Pagination from '@/components/Pagination.vue';
 import {
     Select,
@@ -21,7 +22,7 @@ import {
 } from '@/components/ui/table';
 import { formatDateTime, rm } from '@/lib/money';
 import { index } from '@/routes/audit';
-import type { Paginated } from '@/types';
+import type { Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Audit log', href: index() }] },
@@ -39,6 +40,7 @@ type Log = {
 };
 
 const props = defineProps<{
+    sort: SortState;
     logs: Paginated<Log>;
     action: string;
     actions: string[];
@@ -107,9 +109,15 @@ const describe = (data: Record<string, unknown> | null) =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>When</TableHead>
-                        <TableHead>Who</TableHead>
-                        <TableHead>What</TableHead>
+                        <SortableHead name="created_at" :sort="sort"
+                            >When</SortableHead
+                        >
+                        <SortableHead name="user" :sort="sort"
+                            >Who</SortableHead
+                        >
+                        <SortableHead name="action" :sort="sort"
+                            >What</SortableHead
+                        >
                         <TableHead>Details</TableHead>
                         <TableHead>IP</TableHead>
                     </TableRow>

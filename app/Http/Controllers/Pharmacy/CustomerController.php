@@ -11,6 +11,7 @@ use App\Models\Sale;
 use App\Models\Shift;
 use App\Models\User;
 use App\Support\PerPage;
+use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -23,10 +24,13 @@ class CustomerController extends Controller
     {
         $search = (string) $request->string('search');
 
+        $query = Customer::query();
+        $sort = Sort::apply($query, ['name' => 'name', 'ic_no' => 'ic_no', 'dob' => 'dob', 'phone' => 'phone', 'allergies' => 'allergies'], 'name', tieBreaker: 'id');
+
         return Inertia::render('customers/Index', [
-            'customers' => Customer::query()
+            'sort' => $sort,
+            'customers' => $query
                 ->when($search, fn ($q) => $q->where(fn ($q) => $q->where('name', 'like', "%$search%")->orWhere('ic_no', 'like', "$search%")->orWhere('phone', 'like', "%$search%")))
-                ->orderBy('name')
                 ->paginate(PerPage::get())
                 ->withQueryString(),
             'search' => $search,

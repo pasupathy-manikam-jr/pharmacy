@@ -10,6 +10,7 @@ use App\Models\PurchaseOrder;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Support\PerPage;
+use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,12 +20,15 @@ class GoodsReceiptController extends Controller
 {
     public function index(Request $request): Response
     {
+        $query = GoodsReceipt::query()->select('goods_receipts.*')->join('suppliers', 'suppliers.id', '=', 'goods_receipts.supplier_id');
+        $sort = Sort::apply($query, ['received_on' => 'goods_receipts.received_on', 'supplier' => 'suppliers.name', 'invoice_no' => 'goods_receipts.invoice_no', 'total_sen' => 'goods_receipts.total_sen', 'payment_status' => 'goods_receipts.payment_status'], 'received_on', 'desc', 'goods_receipts.id');
+
         return Inertia::render('receipts/Index', [
-            'receipts' => GoodsReceipt::query()
-                ->where('branch_id', $request->user()?->branch_id)
+            'sort' => $sort,
+            'receipts' => $query
+                ->where('goods_receipts.branch_id', $request->user()?->branch_id)
                 ->with('supplier:id,name')
                 ->withCount('lines')
-                ->latest()
                 ->paginate(PerPage::get())
                 ->withQueryString(),
         ]);

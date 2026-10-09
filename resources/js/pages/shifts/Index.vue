@@ -6,6 +6,7 @@ import ShiftController from '@/actions/App/Http/Controllers/Pharmacy/ShiftContro
 import InputError from '@/components/InputError.vue';
 import OpenShiftForm from '@/components/OpenShiftForm.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import Pagination from '@/components/Pagination.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +21,7 @@ import {
 } from '@/components/ui/table';
 import { formatDateTime, rm, toSen } from '@/lib/money';
 import { index } from '@/routes/shifts';
-import type { Paginated } from '@/types';
+import type { Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'My shift', href: index() }] },
@@ -45,6 +46,7 @@ type ShiftRow = {
 };
 
 const props = defineProps<{
+    sort: SortState;
     current: (ShiftRow & { summary: Summary }) | null;
     history: Paginated<ShiftRow>;
 }>();
@@ -178,12 +180,24 @@ const varianceTone = (v: number) =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Opened</TableHead>
-                        <TableHead>Closed</TableHead>
-                        <TableHead>Staff</TableHead>
-                        <TableHead class="text-right">Expected</TableHead>
-                        <TableHead class="text-right">Counted</TableHead>
-                        <TableHead class="text-right">Difference</TableHead>
+                        <SortableHead name="opened_at" :sort="sort"
+                            >Opened</SortableHead
+                        >
+                        <SortableHead name="closed_at" :sort="sort"
+                            >Closed</SortableHead
+                        >
+                        <SortableHead name="staff" :sort="sort"
+                            >Staff</SortableHead
+                        >
+                        <SortableHead name="expected" :sort="sort" align="right"
+                            >Expected</SortableHead
+                        >
+                        <SortableHead name="counted" :sort="sort" align="right"
+                            >Counted</SortableHead
+                        >
+                        <SortableHead name="variance" :sort="sort" align="right"
+                            >Difference</SortableHead
+                        >
                         <TableHead>Note</TableHead>
                     </TableRow>
                 </TableHeader>

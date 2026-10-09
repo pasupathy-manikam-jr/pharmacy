@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pharmacy;
 
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
+use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,7 +14,10 @@ class SupplierController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('suppliers/Index', ['suppliers' => Supplier::query()->orderBy('name')->get()]);
+        $query = Supplier::query();
+        $sort = Sort::apply($query, ['name' => 'name', 'tin' => 'tin', 'phone' => 'phone', 'email' => 'email'], 'name', tieBreaker: 'id');
+
+        return Inertia::render('suppliers/Index', ['suppliers' => $query->get(), 'sort' => $sort]);
     }
 
     public function store(Request $request): RedirectResponse

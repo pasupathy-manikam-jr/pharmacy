@@ -3,6 +3,7 @@ import { Head, router } from '@inertiajs/vue3';
 import { History } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import Pagination from '@/components/Pagination.vue';
 import {
     Select,
@@ -21,7 +22,7 @@ import {
 } from '@/components/ui/table';
 import { formatDateTime } from '@/lib/money';
 import { index as stock, movements as movementsRoute } from '@/routes/stock';
-import type { Paginated } from '@/types';
+import type { Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: {
@@ -46,7 +47,11 @@ type Movement = {
     };
 };
 
-const props = defineProps<{ movements: Paginated<Movement>; type: string }>();
+const props = defineProps<{
+    sort: SortState;
+    movements: Paginated<Movement>;
+    type: string;
+}>();
 
 const types: Record<string, { label: string; tone: string }> = {
     receipt: {
@@ -110,12 +115,30 @@ watch(t, (v) =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>When</TableHead>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Batch</TableHead>
-                        <TableHead>What</TableHead>
-                        <TableHead class="text-right">Change</TableHead>
-                        <TableHead class="text-right">Left</TableHead>
+                        <SortableHead name="created_at" :sort="sort"
+                            >When</SortableHead
+                        >
+                        <SortableHead name="product" :sort="sort"
+                            >Product</SortableHead
+                        >
+                        <SortableHead name="batch_no" :sort="sort"
+                            >Batch</SortableHead
+                        >
+                        <SortableHead name="type" :sort="sort"
+                            >What</SortableHead
+                        >
+                        <SortableHead
+                            name="qty_delta"
+                            :sort="sort"
+                            align="right"
+                            >Change</SortableHead
+                        >
+                        <SortableHead
+                            name="qty_after"
+                            :sort="sort"
+                            align="right"
+                            >Left</SortableHead
+                        >
                         <TableHead>Note</TableHead>
                     </TableRow>
                 </TableHeader>

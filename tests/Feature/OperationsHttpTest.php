@@ -179,6 +179,22 @@ class OperationsHttpTest extends TestCase
         $this->get(route('products.index', ['per_page' => 10, 'page' => 2]))->assertInertia(fn ($p) => $p->where('products.prev_page_url', fn ($url) => str_contains((string) $url, 'per_page=10')));
     }
 
+    public function test_lists_sort_by_whitelisted_columns_only(): void
+    {
+        $this->get(route('products.index', ['sort' => 'price_sen', 'dir' => 'desc']))
+            ->assertInertia(fn ($p) => $p->where('sort', ['sort' => 'price_sen', 'dir' => 'desc'])->where('products.data.0.name', 'Accu-Chek Test Strips'));
+
+        $this->get(route('products.index', ['sort' => 'name;DROP TABLE products', 'dir' => 'sideways']))
+            ->assertInertia(fn ($p) => $p->where('sort', ['sort' => 'name', 'dir' => 'asc']));
+
+        $this->get(route('stock.index', ['sort' => 'value_sen', 'dir' => 'desc', 'per_page' => 10]))
+            ->assertInertia(fn ($p) => $p->where('sort.sort', 'value_sen')->has('levels.data', 10));
+
+        foreach (['sales.index' => 'total_sen', 'receipts.index' => 'supplier', 'purchase-orders.index' => 'total_sen', 'prescriptions.index' => 'patient', 'shifts.index' => 'variance', 'audit.index' => 'user', 'stock.movements' => 'qty_delta', 'customers.index' => 'dob', 'suppliers.index' => 'tin'] as $route => $column) {
+            $this->get(route($route, ['sort' => $column, 'dir' => 'desc']))->assertOk()->assertInertia(fn ($p) => $p->where('sort.sort', $column));
+        }
+    }
+
     public function test_goods_receipt_listing_still_works(): void
     {
         $this->get(route('receipts.index'))->assertOk();

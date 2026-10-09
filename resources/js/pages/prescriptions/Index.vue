@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { FileText, Search } from '@lucide/vue';
 import { ref } from 'vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import Pagination from '@/components/Pagination.vue';
 import { Input } from '@/components/ui/input';
 import {
@@ -16,7 +17,7 @@ import {
 import { formatDate } from '@/lib/money';
 import { show as customerShow } from '@/routes/customers';
 import { index } from '@/routes/prescriptions';
-import type { Paginated } from '@/types';
+import type { Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Prescriptions', href: index() }] },
@@ -34,7 +35,11 @@ type Row = {
     customer: { id: number; name: string; ic_no: string | null };
 };
 
-const props = defineProps<{ prescriptions: Paginated<Row>; search: string }>();
+const props = defineProps<{
+    sort: SortState;
+    prescriptions: Paginated<Row>;
+    search: string;
+}>();
 const q = ref(props.search);
 const submit = () =>
     router.get(
@@ -70,10 +75,18 @@ const submit = () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Issued</TableHead>
-                        <TableHead>Patient</TableHead>
-                        <TableHead>Prescriber</TableHead>
-                        <TableHead>Diagnosis</TableHead>
+                        <SortableHead name="issued_on" :sort="sort"
+                            >Issued</SortableHead
+                        >
+                        <SortableHead name="patient" :sort="sort"
+                            >Patient</SortableHead
+                        >
+                        <SortableHead name="prescriber" :sort="sort"
+                            >Prescriber</SortableHead
+                        >
+                        <SortableHead name="diagnosis" :sort="sort"
+                            >Diagnosis</SortableHead
+                        >
                         <TableHead>Dispensed</TableHead>
                     </TableRow>
                 </TableHeader>

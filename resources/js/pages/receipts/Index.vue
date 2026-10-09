@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { ClipboardList, Plus } from '@lucide/vue';
 import Pagination from '@/components/Pagination.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -14,7 +15,7 @@ import {
 } from '@/components/ui/table';
 import { formatDate, rm } from '@/lib/money';
 import { create, index } from '@/routes/receipts';
-import type { Paginated } from '@/types';
+import type { Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Goods received', href: index() }] },
@@ -30,7 +31,10 @@ type Receipt = {
     supplier: { id: number; name: string };
 };
 
-defineProps<{ receipts: Paginated<Receipt> }>();
+defineProps<{
+    sort: SortState;
+    receipts: Paginated<Receipt>;
+}>();
 
 const statusTone = {
     paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300',
@@ -59,12 +63,25 @@ const statusTone = {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Received</TableHead>
-                        <TableHead>Supplier</TableHead>
-                        <TableHead>Invoice</TableHead>
+                        <SortableHead name="received_on" :sort="sort"
+                            >Received</SortableHead
+                        >
+                        <SortableHead name="supplier" :sort="sort"
+                            >Supplier</SortableHead
+                        >
+                        <SortableHead name="invoice_no" :sort="sort"
+                            >Invoice</SortableHead
+                        >
                         <TableHead class="text-right">Lines</TableHead>
-                        <TableHead class="text-right">Total</TableHead>
-                        <TableHead>Payment</TableHead>
+                        <SortableHead
+                            name="total_sen"
+                            :sort="sort"
+                            align="right"
+                            >Total</SortableHead
+                        >
+                        <SortableHead name="payment_status" :sort="sort"
+                            >Payment</SortableHead
+                        >
                     </TableRow>
                 </TableHeader>
                 <TableBody>

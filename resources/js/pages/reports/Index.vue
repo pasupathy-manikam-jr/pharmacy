@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { BarChart3, Download } from '@lucide/vue';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import DatePicker from '@/components/DatePicker.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
     TableCell,
     TableFooter,
-    TableHead,
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
 import { formatDate, rm } from '@/lib/money';
 import { index } from '@/routes/reports';
+import type { SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Reports', href: index() }] },
@@ -33,6 +34,34 @@ const f = reactive({ ...props.filters });
 watch(f, () =>
     router.get(index().url, { ...f }, { preserveState: true, replace: true }),
 );
+
+// Every row is on the page, so reports sort in the browser.
+const localSort = ref<SortState>({ sort: '', dir: 'asc' });
+watch(
+    () => props.filters.report,
+    () => (localSort.value = { sort: '', dir: 'asc' }),
+);
+function sortBy(name: string) {
+    const same = localSort.value.sort === name;
+    localSort.value = {
+        sort: name,
+        dir: same && localSort.value.dir === 'asc' ? 'desc' : 'asc',
+    };
+}
+const sortedRows = computed(() => {
+    const { sort, dir } = localSort.value;
+    if (!sort) return props.rows;
+    const sign = dir === 'asc' ? 1 : -1;
+    return [...props.rows].sort((a, b) => {
+        const x = a[sort];
+        const y = b[sort];
+        const nx = Number(x);
+        const ny = Number(y);
+        if (x !== null && y !== null && !Number.isNaN(nx) && !Number.isNaN(ny))
+            return (nx - ny) * sign;
+        return String(x ?? '').localeCompare(String(y ?? '')) * sign;
+    });
+});
 
 const columns = computed(() =>
     props.rows[0] ? Object.keys(props.rows[0]) : [],
@@ -130,11 +159,15 @@ const tabs = [
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead
+                        <SortableHead
                             v-for="c in columns"
                             :key="c"
-                            :class="isNumber(c) && 'text-right'"
-                            >{{ heading(c) }}</TableHead
+                            :name="c"
+                            :sort="localSort"
+                            :align="isNumber(c) ? 'right' : undefined"
+                            local
+                            @sort="sortBy"
+                            >{{ heading(c) }}</SortableHead
                         >
                     </TableRow>
                 </TableHeader>
@@ -145,7 +178,7 @@ const tabs = [
                             >Nothing in this period.</TableCell
                         >
                     </TableRow>
-                    <TableRow v-for="(r, i) in rows" :key="i">
+                    <TableRow v-for="(r, i) in sortedRows" :key="i">
                         <TableCell
                             v-for="c in columns"
                             :key="c"

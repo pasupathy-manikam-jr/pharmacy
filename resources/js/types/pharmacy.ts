@@ -3,6 +3,9 @@ export type Paginated<T> = {
     current_page: number;
     last_page: number;
     per_page: number;
+    from: number | null;
+    to: number | null;
+    links: { url: string | null; label: string; active: boolean }[];
     total: number;
     prev_page_url: string | null;
     next_page_url: string | null;
@@ -55,3 +58,5 @@ export type Option<T extends string | number = number> = {
     label: string;
     hint?: string;
 };
+
+export type SortState = { sort: string; dir: 'asc' | 'desc' };

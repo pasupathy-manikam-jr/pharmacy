@@ -6,6 +6,7 @@ import Pagination from '@/components/Pagination.vue';
 import ViewToggle from '@/components/ViewToggle.vue';
 import { useViewMode } from '@/composables/useViewMode';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import PoisonBadge from '@/components/PoisonBadge.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,13 +25,17 @@ import {
     importMethod as importPage,
     index,
 } from '@/routes/products';
-import type { Paginated, Product } from '@/types';
+import type { Paginated, Product, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Products', href: index() }] },
 });
 
-const props = defineProps<{ products: Paginated<Product>; search: string }>();
+const props = defineProps<{
+    sort: SortState;
+    products: Paginated<Product>;
+    search: string;
+}>();
 
 const q = ref(props.search);
 const view = useViewMode('products');
@@ -84,12 +89,30 @@ const submit = () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Generic</TableHead>
-                        <TableHead>Class</TableHead>
-                        <TableHead>Barcode</TableHead>
-                        <TableHead class="text-right">Price</TableHead>
-                        <TableHead class="text-right">Reorder at</TableHead>
+                        <SortableHead name="name" :sort="sort"
+                            >Product</SortableHead
+                        >
+                        <SortableHead name="generic_name" :sort="sort"
+                            >Generic</SortableHead
+                        >
+                        <SortableHead name="poison_group" :sort="sort"
+                            >Class</SortableHead
+                        >
+                        <SortableHead name="barcode" :sort="sort"
+                            >Barcode</SortableHead
+                        >
+                        <SortableHead
+                            name="price_sen"
+                            :sort="sort"
+                            align="right"
+                            >Price</SortableHead
+                        >
+                        <SortableHead
+                            name="reorder_level"
+                            :sort="sort"
+                            align="right"
+                            >Reorder at</SortableHead
+                        >
                         <TableHead class="col-action" />
                     </TableRow>
                 </TableHeader>

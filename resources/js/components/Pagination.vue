@@ -32,7 +32,7 @@ function resize(value: unknown) {
         v-if="page.total > 0"
         class="no-print flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"
     >
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
             <span>Rows per page</span>
             <Select
                 :model-value="String(page.per_page)"
@@ -55,11 +55,15 @@ function resize(value: unknown) {
                 </SelectContent>
             </Select>
             <span class="ml-2"
-                >Page {{ page.current_page }} of {{ page.last_page }},
-                {{ page.total }} total</span
+                >Showing {{ page.from }} to {{ page.to }} of
+                {{ page.total }} results</span
             >
         </div>
-        <div v-if="page.last_page > 1" class="flex gap-2">
+        <nav
+            v-if="page.last_page > 1"
+            class="flex flex-wrap gap-1"
+            aria-label="Pages"
+        >
             <Button
                 variant="outline"
                 size="sm"
@@ -70,6 +74,21 @@ function resize(value: unknown) {
                     >Previous</Link
                 >
             </Button>
+            <template v-for="(link, i) in page.links.slice(1, -1)" :key="i">
+                <span v-if="!link.url" class="px-2 py-1">…</span>
+                <Button
+                    v-else
+                    size="sm"
+                    :variant="link.active ? 'default' : 'outline'"
+                    :aria-current="link.active ? 'page' : undefined"
+                    class="min-w-8"
+                    as-child
+                >
+                    <Link :href="link.url" preserve-scroll>{{
+                        link.label
+                    }}</Link>
+                </Button>
+            </template>
             <Button
                 variant="outline"
                 size="sm"
@@ -80,6 +99,6 @@ function resize(value: unknown) {
                     >Next</Link
                 >
             </Button>
-        </div>
+        </nav>
     </div>
 </template>

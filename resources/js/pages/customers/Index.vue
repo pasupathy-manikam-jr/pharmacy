@@ -10,6 +10,7 @@ import ViewToggle from '@/components/ViewToggle.vue';
 import { useInitials } from '@/composables/useInitials';
 import { useViewMode } from '@/composables/useViewMode';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,13 +31,17 @@ import {
 } from '@/components/ui/table';
 import { formatDate } from '@/lib/money';
 import { index, show } from '@/routes/customers';
-import type { Customer, Paginated } from '@/types';
+import type { Customer, Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Customers', href: index() }] },
 });
 
-const props = defineProps<{ customers: Paginated<Customer>; search: string }>();
+const props = defineProps<{
+    sort: SortState;
+    customers: Paginated<Customer>;
+    search: string;
+}>();
 
 const q = ref(props.search);
 const view = useViewMode('customers');
@@ -159,11 +164,21 @@ const submit = () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>MyKad</TableHead>
-                        <TableHead>Born</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead>Allergies</TableHead>
+                        <SortableHead name="name" :sort="sort"
+                            >Name</SortableHead
+                        >
+                        <SortableHead name="ic_no" :sort="sort"
+                            >MyKad</SortableHead
+                        >
+                        <SortableHead name="dob" :sort="sort"
+                            >Born</SortableHead
+                        >
+                        <SortableHead name="phone" :sort="sort"
+                            >Phone</SortableHead
+                        >
+                        <SortableHead name="allergies" :sort="sort"
+                            >Allergies</SortableHead
+                        >
                     </TableRow>
                 </TableHeader>
                 <TableBody>

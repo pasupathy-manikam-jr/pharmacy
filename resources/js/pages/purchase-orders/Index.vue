@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { Plus, ShoppingCart } from '@lucide/vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import Pagination from '@/components/Pagination.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +15,7 @@ import {
 } from '@/components/ui/table';
 import { formatDate, rm } from '@/lib/money';
 import { create, index, show } from '@/routes/purchase-orders';
-import type { Paginated } from '@/types';
+import type { Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Purchase orders', href: index() }] },
@@ -31,7 +32,10 @@ type Order = {
     supplier: { name: string };
 };
 
-defineProps<{ orders: Paginated<Order> }>();
+defineProps<{
+    sort: SortState;
+    orders: Paginated<Order>;
+}>();
 
 const tone = {
     draft: 'bg-slate-100 text-slate-700 dark:bg-slate-500/20 dark:text-slate-300',
@@ -62,13 +66,28 @@ const tone = {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Order</TableHead>
-                        <TableHead>Supplier</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead>Expected</TableHead>
+                        <SortableHead name="number" :sort="sort"
+                            >Order</SortableHead
+                        >
+                        <SortableHead name="supplier" :sort="sort"
+                            >Supplier</SortableHead
+                        >
+                        <SortableHead name="created_at" :sort="sort"
+                            >Created</SortableHead
+                        >
+                        <SortableHead name="expected_on" :sort="sort"
+                            >Expected</SortableHead
+                        >
                         <TableHead class="text-right">Lines</TableHead>
-                        <TableHead class="text-right">Total</TableHead>
-                        <TableHead>Status</TableHead>
+                        <SortableHead
+                            name="total_sen"
+                            :sort="sort"
+                            align="right"
+                            >Total</SortableHead
+                        >
+                        <SortableHead name="status" :sort="sort"
+                            >Status</SortableHead
+                        >
                     </TableRow>
                 </TableHeader>
                 <TableBody>

@@ -4,6 +4,7 @@ import { Truck } from '@lucide/vue';
 import SupplierController from '@/actions/App/Http/Controllers/Pharmacy/SupplierController';
 import InputError from '@/components/InputError.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import ViewToggle from '@/components/ViewToggle.vue';
 import { useViewMode } from '@/composables/useViewMode';
 import { Button } from '@/components/ui/button';
@@ -18,13 +19,16 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { index } from '@/routes/suppliers';
-import type { Supplier } from '@/types';
+import type { Supplier, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Suppliers', href: index() }] },
 });
 
-defineProps<{ suppliers: Supplier[] }>();
+defineProps<{
+    sort: SortState;
+    suppliers: Supplier[];
+}>();
 
 const view = useViewMode('suppliers', 'grid');
 
@@ -85,10 +89,16 @@ const submit = () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>TIN</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead>Email</TableHead>
+                        <SortableHead name="name" :sort="sort"
+                            >Name</SortableHead
+                        >
+                        <SortableHead name="tin" :sort="sort">TIN</SortableHead>
+                        <SortableHead name="phone" :sort="sort"
+                            >Phone</SortableHead
+                        >
+                        <SortableHead name="email" :sort="sort"
+                            >Email</SortableHead
+                        >
                     </TableRow>
                 </TableHeader>
                 <TableBody>

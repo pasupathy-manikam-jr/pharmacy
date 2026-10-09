@@ -9,6 +9,7 @@ use App\Models\Sale;
 use App\Models\User;
 use App\Support\EInvoiceSummary;
 use App\Support\PerPage;
+use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,13 +21,15 @@ class SaleController extends Controller
     {
         $search = (string) $request->string('search');
 
+        $query = Sale::query()->select('sales.*')->leftJoin('customers', 'customers.id', '=', 'sales.customer_id')->join('users', 'users.id', '=', 'sales.user_id');
+        $sort = Sort::apply($query, ['number' => 'sales.number', 'created_at' => 'sales.created_at', 'customer' => 'customers.name', 'cashier' => 'users.name', 'payment_method' => 'sales.payment_method', 'total_sen' => 'sales.total_sen'], 'created_at', 'desc', 'sales.id');
+
         return Inertia::render('sales/Index', [
-            'sales' => Sale::query()
-                ->where('branch_id', $request->user()?->branch_id)
-                ->when($search, fn ($q) => $q->where('number', 'like', "%$search%"))
+            'sort' => $sort,
+            'sales' => $query
+                ->where('sales.branch_id', $request->user()?->branch_id)
+                ->when($search, fn ($q) => $q->where('sales.number', 'like', "%$search%"))
                 ->with(['customer:id,name', 'user:id,name'])
-                ->latest()
-                ->latest('id')
                 ->paginate(PerPage::get())
                 ->withQueryString(),
             'search' => $search,

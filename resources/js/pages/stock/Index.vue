@@ -29,6 +29,7 @@ import {
 import { ref } from 'vue';
 import Pagination from '@/components/Pagination.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import SortableHead from '@/components/SortableHead.vue';
 import { Input } from '@/components/ui/input';
 import {
     Table,
@@ -40,7 +41,7 @@ import {
 } from '@/components/ui/table';
 import { formatDate, rm } from '@/lib/money';
 import { index, movements, transfer } from '@/routes/stock';
-import type { Paginated } from '@/types';
+import type { Paginated, SortState } from '@/types';
 
 defineOptions({
     layout: { breadcrumbs: [{ title: 'Stock', href: index() }] },
@@ -59,6 +60,7 @@ type Level = {
 };
 
 const props = defineProps<{
+    sort: SortState;
     levels: Paginated<Level>;
     search: string;
     reasons: Record<string, string>;
@@ -133,12 +135,27 @@ const tone = (days: number) =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Batch</TableHead>
-                        <TableHead>Expiry</TableHead>
-                        <TableHead class="text-right">On hand</TableHead>
-                        <TableHead class="text-right">Unit cost</TableHead>
-                        <TableHead class="text-right">Value</TableHead>
+                        <SortableHead name="product" :sort="sort"
+                            >Product</SortableHead
+                        >
+                        <SortableHead name="batch_no" :sort="sort"
+                            >Batch</SortableHead
+                        >
+                        <SortableHead name="expiry_date" :sort="sort"
+                            >Expiry</SortableHead
+                        >
+                        <SortableHead name="qty" :sort="sort" align="right"
+                            >On hand</SortableHead
+                        >
+                        <SortableHead name="cost_sen" :sort="sort" align="right"
+                            >Unit cost</SortableHead
+                        >
+                        <SortableHead
+                            name="value_sen"
+                            :sort="sort"
+                            align="right"
+                            >Value</SortableHead
+                        >
                         <TableHead v-if="canAdjust" class="col-action" />
                     </TableRow>
                 </TableHeader>

@@ -10,6 +10,7 @@ use App\Models\PurchaseOrderLine;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Support\PerPage;
+use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,14 +22,17 @@ class PurchaseOrderController extends Controller
 {
     public function index(Request $request): Response
     {
+        $query = PurchaseOrder::query()->join('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id');
+        $sort = Sort::apply($query, ['number' => 'purchase_orders.number', 'supplier' => 'suppliers.name', 'created_at' => 'purchase_orders.created_at', 'expected_on' => 'purchase_orders.expected_on', 'total_sen' => 'total_sen', 'status' => 'purchase_orders.status'], 'created_at', 'desc', 'purchase_orders.id');
+
         return Inertia::render('purchase-orders/Index', [
-            'orders' => PurchaseOrder::query()
-                ->where('branch_id', $request->user()?->branch_id)
+            'sort' => $sort,
+            'orders' => $query
+                ->where('purchase_orders.branch_id', $request->user()?->branch_id)
                 ->with('supplier:id,name')
                 ->withCount('lines')
                 ->select('purchase_orders.*')
                 ->addSelect(['total_sen' => PurchaseOrderLine::query()->selectRaw('COALESCE(SUM(qty * cost_sen), 0)')->whereColumn('purchase_order_id', 'purchase_orders.id')])
-                ->latest('id')
                 ->paginate(PerPage::get())
                 ->withQueryString(),
         ]);

@@ -11,6 +11,7 @@ use App\Models\StockLevel;
 use App\Models\StockMovement;
 use App\Models\User;
 use App\Support\PerPage;
+use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -22,16 +23,18 @@ class StockController extends Controller
     public function index(Request $request): Response
     {
         $search = (string) $request->string('search');
+        $query = StockLevel::query()
+            ->select('stock_levels.*')
+            ->join('batches', 'batches.id', '=', 'stock_levels.batch_id')
+            ->join('products', 'products.id', '=', 'batches.product_id');
+        $sort = Sort::apply($query, ['product' => 'products.name', 'batch_no' => 'batches.batch_no', 'expiry_date' => 'batches.expiry_date', 'qty' => 'stock_levels.qty', 'cost_sen' => 'batches.cost_sen', 'value_sen' => '(stock_levels.qty * batches.cost_sen)'], 'product');
 
         return Inertia::render('stock/Index', [
-            'levels' => StockLevel::query()
-                ->select('stock_levels.*')
-                ->join('batches', 'batches.id', '=', 'stock_levels.batch_id')
-                ->join('products', 'products.id', '=', 'batches.product_id')
+            'sort' => $sort,
+            'levels' => $query
                 ->where('stock_levels.branch_id', $request->user()?->branch_id)
                 ->where('stock_levels.qty', '!=', 0)
                 ->when($search, fn ($q) => $q->where(fn ($q) => $q->where('products.name', 'like', "%$search%")->orWhere('batches.batch_no', 'like', "$search%")))
-                ->orderBy('products.name')
                 ->orderBy('batches.expiry_date')
                 ->with('batch.product:id,name,strength,unit')
                 ->paginate(PerPage::get())
@@ -77,13 +80,18 @@ class StockController extends Controller
     public function movements(Request $request): Response
     {
         $type = (string) $request->string('type');
+        $query = StockMovement::query()
+            ->select('stock_movements.*')
+            ->join('batches', 'batches.id', '=', 'stock_movements.batch_id')
+            ->join('products', 'products.id', '=', 'batches.product_id');
+        $sort = Sort::apply($query, ['created_at' => 'stock_movements.created_at', 'product' => 'products.name', 'batch_no' => 'batches.batch_no', 'type' => 'stock_movements.type', 'qty_delta' => 'stock_movements.qty_delta', 'qty_after' => 'stock_movements.qty_after'], 'created_at', 'desc', 'stock_movements.id');
 
         return Inertia::render('stock/Movements', [
-            'movements' => StockMovement::query()
-                ->where('branch_id', $request->user()?->branch_id)
-                ->when($type, fn ($q) => $q->where('type', $type))
+            'sort' => $sort,
+            'movements' => $query
+                ->where('stock_movements.branch_id', $request->user()?->branch_id)
+                ->when($type, fn ($q) => $q->where('stock_movements.type', $type))
                 ->with(['batch:id,batch_no,product_id', 'batch.product:id,name,strength'])
-                ->latest('id')
                 ->paginate(PerPage::get())
                 ->withQueryString(),
             'type' => $type,
