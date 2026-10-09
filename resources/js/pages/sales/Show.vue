@@ -144,19 +144,21 @@ const errors = computed(() => form.errors as Record<string, string>);
         <div
             class="no-print flex w-full max-w-xl flex-wrap justify-center gap-2"
         >
-            <BackButton :href="index()" label="sales" />
+            <BackButton :href="index()" :label="$t('sales')" />
             <Button class="bg-sky-600 hover:bg-sky-700" @click="print"
-                ><Printer /> Print receipt</Button
+                ><Printer /> {{ $t('Print receipt') }}</Button
             >
             <Button variant="outline" as-child
-                ><Link :href="pos()"><ScanBarcode /> New sale</Link></Button
+                ><Link :href="pos()"
+                    ><ScanBarcode /> {{ $t('New sale') }}</Link
+                ></Button
             >
             <Button
                 v-if="canRefund && refundable.length"
                 variant="outline"
                 class="text-rose-600"
                 @click="startRefund"
-                ><RotateCcw /> Refund items</Button
+                ><RotateCcw /> {{ $t('Refund items') }}</Button
             >
         </div>
 
@@ -171,14 +173,17 @@ const errors = computed(() => form.errors as Record<string, string>);
                         ? EInvoiceController.submitSale.url(sale.id)
                         : undefined
                 "
-                submit-label="Issue e-invoice to customer"
+                :submit-label="$t('Issue e-invoice to customer')"
             />
             <p
                 v-if="!einvoice && !sale.customer?.tin"
                 class="mt-1 text-xs text-muted-foreground"
             >
-                Walk-in sales go into the monthly consolidated e-invoice. Add
-                the customer’s TIN to issue them their own.
+                {{
+                    $t(
+                        'Walk-in sales go into the monthly consolidated e-invoice. Add the customer’s TIN to issue them their own.',
+                    )
+                }}
             </p>
         </div>
 
@@ -189,18 +194,28 @@ const errors = computed(() => form.errors as Record<string, string>);
             <header class="text-center">
                 <p class="text-sm font-bold">{{ sale.branch.name }}</p>
                 <p v-if="sale.branch.address">{{ sale.branch.address }}</p>
-                <p v-if="sale.branch.phone">Tel {{ sale.branch.phone }}</p>
+                <p v-if="sale.branch.phone">
+                    {{ $t('Tel :phone', { phone: sale.branch.phone ?? '' }) }}
+                </p>
                 <p v-if="sale.branch.licence_no">
-                    Licence {{ sale.branch.licence_no }}
+                    {{
+                        $t('Licence :no', { no: sale.branch.licence_no ?? '' })
+                    }}
                 </p>
             </header>
             <div class="my-2 border-t border-dashed border-black" />
             <p>{{ sale.number }}</p>
             <p>{{ formatDateTime(sale.created_at) }}, {{ sale.user.name }}</p>
-            <p v-if="sale.customer">Customer: {{ sale.customer.name }}</p>
+            <p v-if="sale.customer">
+                {{ $t('Customer: :name', { name: sale.customer.name }) }}
+            </p>
             <p v-if="sale.prescription">
-                Rx: {{ sale.prescription.prescriber_name }}
-                {{ sale.prescription.prescriber_reg_no }}
+                {{
+                    $t('Rx: :prescriber', {
+                        prescriber:
+                            `${sale.prescription.prescriber_name} ${sale.prescription.prescriber_reg_no ?? ''}`.trim(),
+                    })
+                }}
             </p>
             <div class="my-2 border-t border-dashed border-black" />
             <div v-for="l in sale.lines" :key="l.id" class="mb-1.5">
@@ -210,36 +225,44 @@ const errors = computed(() => form.errors as Record<string, string>);
                     <span>{{ rm(l.qty * l.price_sen) }}</span>
                 </div>
                 <p class="text-[10px]">
-                    Batch {{ l.batch.batch_no }} exp
-                    {{ formatDate(l.batch.expiry_date) }}
+                    {{
+                        $t('Batch :batch exp :date', {
+                            batch: l.batch.batch_no,
+                            date: formatDate(l.batch.expiry_date),
+                        })
+                    }}
                 </p>
                 <p v-if="l.dosage" class="font-bold">{{ l.dosage }}</p>
                 <p v-if="l.refunded_qty" class="text-[10px]">
-                    Refunded {{ l.refunded_qty }}
+                    {{ $t('Refunded :qty', { qty: l.refunded_qty }) }}
                 </p>
             </div>
             <div class="my-2 border-t border-dashed border-black" />
             <div class="flex justify-between">
-                <span>Subtotal</span><span>{{ rm(sale.subtotal_sen) }}</span>
+                <span>{{ $t('Subtotal') }}</span
+                ><span>{{ rm(sale.subtotal_sen) }}</span>
             </div>
             <div v-if="sale.tax_sen" class="flex justify-between">
-                <span>Tax</span><span>{{ rm(sale.tax_sen) }}</span>
+                <span>{{ $t('Tax') }}</span
+                ><span>{{ rm(sale.tax_sen) }}</span>
             </div>
             <div v-if="sale.discount_sen" class="flex justify-between">
-                <span>Discount</span><span>−{{ rm(sale.discount_sen) }}</span>
+                <span>{{ $t('Discount') }}</span
+                ><span>−{{ rm(sale.discount_sen) }}</span>
             </div>
             <div class="flex justify-between text-sm font-bold">
-                <span>TOTAL</span><span>{{ rm(sale.total_sen) }}</span>
+                <span>{{ $t('TOTAL') }}</span
+                ><span>{{ rm(sale.total_sen) }}</span>
             </div>
             <div class="flex justify-between">
-                <span>{{ methodLabel[sale.payment_method] }}</span
+                <span>{{ $t(methodLabel[sale.payment_method]) }}</span
                 ><span>{{ rm(sale.tendered_sen) }}</span>
             </div>
             <div
                 v-if="sale.tendered_sen > sale.total_sen"
                 class="flex justify-between"
             >
-                <span>Change</span
+                <span>{{ $t('Change') }}</span
                 ><span>{{ rm(sale.tendered_sen - sale.total_sen) }}</span>
             </div>
             <template v-if="sale.refunds.length">
@@ -249,18 +272,20 @@ const errors = computed(() => form.errors as Record<string, string>);
                     :key="r.id"
                     class="flex justify-between"
                 >
-                    <span>Refund {{ r.number }}</span
+                    <span>{{ $t('Refund :number', { number: r.number }) }}</span
                     ><span>−{{ rm(r.amount_sen) }}</span>
                 </div>
             </template>
-            <p class="mt-3 text-center">Thank you. Get well soon.</p>
+            <p class="mt-3 text-center">
+                {{ $t('Thank you. Get well soon.') }}
+            </p>
         </article>
 
         <section
             v-if="sale.refunds.length"
             class="no-print w-full max-w-xl rounded-xl border bg-card p-4"
         >
-            <h2 class="mb-2 font-semibold">Refunds</h2>
+            <h2 class="mb-2 font-semibold">{{ $t('Refunds') }}</h2>
             <div
                 v-for="r in sale.refunds"
                 :key="r.id"
@@ -268,8 +293,13 @@ const errors = computed(() => form.errors as Record<string, string>);
             >
                 <div class="flex justify-between text-sm">
                     <span
-                        ><b>{{ r.number }}</b> by {{ r.user.name }},
-                        {{ formatDateTime(r.created_at) }}</span
+                        ><b>{{ r.number }}</b>
+                        {{
+                            $t('by :name, :when', {
+                                name: r.user.name,
+                                when: formatDateTime(r.created_at),
+                            })
+                        }}</span
                     >
                     <span class="font-semibold text-rose-600"
                         >−{{ rm(r.amount_sen) }}</span
@@ -280,7 +310,7 @@ const errors = computed(() => form.errors as Record<string, string>);
                     v-if="einvoice?.status === 'valid' || refundEinvoices[r.id]"
                     :einvoice="refundEinvoices[r.id] ?? null"
                     :submit-url="EInvoiceController.submitRefund.url(r.id)"
-                    submit-label="Send refund note"
+                    :submit-label="$t('Send refund note')"
                 />
             </div>
         </section>
@@ -288,15 +318,19 @@ const errors = computed(() => form.errors as Record<string, string>);
         <Dialog v-model:open="open">
             <DialogContent class="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle
-                        >Refund items from {{ sale.number }}</DialogTitle
-                    >
-                    <DialogDescription
-                        >Items go back into stock. Money is returned the way it
-                        was paid ({{
-                            methodLabel[sale.payment_method]
-                        }}).</DialogDescription
-                    >
+                    <DialogTitle>{{
+                        $t('Refund items from :number', { number: sale.number })
+                    }}</DialogTitle>
+                    <DialogDescription>{{
+                        $t(
+                            'Items go back into stock. Money is returned the way it was paid (:method).',
+                            {
+                                method: $t(
+                                    methodLabel[sale.payment_method] ?? '',
+                                ),
+                            },
+                        )
+                    }}</DialogDescription>
                 </DialogHeader>
                 <form class="grid gap-4" novalidate @submit.prevent="refund">
                     <div
@@ -309,23 +343,31 @@ const errors = computed(() => form.errors as Record<string, string>);
                                 {{ l.product.name }} {{ l.product.strength }}
                             </p>
                             <p class="text-sm text-muted-foreground">
-                                Up to {{ l.qty - l.refunded_qty }}
-                                {{ l.product.unit }}
+                                {{
+                                    $t('Up to :qty :unit', {
+                                        qty: l.qty - l.refunded_qty,
+                                        unit: l.product.unit,
+                                    })
+                                }}
                             </p>
                             <InputError :message="errors[`lines.${l.id}`]" />
                         </div>
                         <Input
                             v-model="form.lines[l.id]"
                             inputmode="numeric"
-                            :aria-label="`Quantity of ${l.product.name} to refund`"
+                            :aria-label="
+                                $t('Quantity of :name to refund', {
+                                    name: l.product.name,
+                                })
+                            "
                         />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="reason">Reason</Label>
+                        <Label for="reason">{{ $t('Reason') }}</Label>
                         <Input
                             id="reason"
                             v-model="form.reason"
-                            placeholder="e.g. Wrong strength dispensed"
+                            :placeholder="$t('e.g. Wrong strength dispensed')"
                         />
                         <InputError :message="form.errors.reason" />
                     </div>
@@ -335,12 +377,14 @@ const errors = computed(() => form.errors as Record<string, string>);
                             type="button"
                             variant="outline"
                             @click="open = false"
-                            >Keep sale</Button
+                            >{{ $t('Keep sale') }}</Button
                         >
                         <Button
                             variant="destructive"
                             :disabled="form.processing"
-                            >Refund {{ rm(estimate) }}</Button
+                            >{{
+                                $t('Refund :amount', { amount: rm(estimate) })
+                            }}</Button
                         >
                     </DialogFooter>
                 </form>

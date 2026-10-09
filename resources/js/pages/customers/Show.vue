@@ -111,14 +111,16 @@ const methodLabel: Record<string, string> = {
         <PageHeader
             :back="{ href: index(), label: 'customers' }"
             :title="customer.name"
-            :description="customer.ic_no ?? 'No MyKad recorded'"
+            :description="customer.ic_no ?? $t('No MyKad recorded')"
             :icon="UserRound"
             tone="bg-pink-100 text-pink-700 dark:bg-pink-500/20 dark:text-pink-300"
         >
             <span
                 v-if="customer.allergies"
                 class="rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white"
-                >Allergic to {{ customer.allergies }}</span
+                >{{
+                    $t('Allergic to :list', { list: customer.allergies ?? '' })
+                }}</span
             >
         </PageHeader>
 
@@ -129,77 +131,83 @@ const methodLabel: Record<string, string> = {
                 @submit.prevent="save"
             >
                 <div class="grid gap-1.5 sm:col-span-2">
-                    <Label for="name">Full name</Label>
+                    <Label for="name">{{ $t('Full name') }}</Label>
                     <Input id="name" v-model="form.name" />
                     <InputError :message="form.errors.name" />
                 </div>
                 <div class="grid gap-1.5">
-                    <Label for="ic">MyKad / passport</Label>
+                    <Label for="ic">{{ $t('MyKad / passport') }}</Label>
                     <Input id="ic" v-model="form.ic_no" />
                 </div>
                 <div class="grid gap-1.5">
-                    <Label for="dob">Date of birth</Label>
+                    <Label for="dob">{{ $t('Date of birth') }}</Label>
                     <DatePicker
                         id="dob"
                         v-model="form.dob"
-                        placeholder="Select date"
+                        :placeholder="$t('Select date')"
                     />
                     <InputError :message="form.errors.dob" />
                 </div>
                 <div class="grid gap-1.5">
-                    <Label for="sex">Sex</Label>
+                    <Label for="sex">{{ $t('Sex') }}</Label>
                     <Select v-model="form.sex">
                         <SelectTrigger id="sex" class="w-full"
                             ><SelectValue placeholder="Select"
                         /></SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="F">Female</SelectItem>
-                            <SelectItem value="M">Male</SelectItem>
+                            <SelectItem value="F">{{
+                                $t('Female')
+                            }}</SelectItem>
+                            <SelectItem value="M">{{ $t('Male') }}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
                 <div class="grid gap-1.5">
-                    <Label for="citizenship">Citizenship</Label>
+                    <Label for="citizenship">{{ $t('Citizenship') }}</Label>
                     <Input id="citizenship" v-model="form.citizenship" />
                 </div>
                 <div class="grid gap-1.5">
-                    <Label for="phone">Phone</Label>
+                    <Label for="phone">{{ $t('Phone') }}</Label>
                     <Input id="phone" v-model="form.phone" />
                 </div>
                 <div class="grid gap-1.5 sm:col-span-2">
-                    <Label for="email">Email</Label>
+                    <Label for="email">{{ $t('Email') }}</Label>
                     <Input id="email" v-model="form.email" />
                     <InputError :message="form.errors.email" />
                 </div>
                 <div class="grid gap-1.5 sm:col-span-3">
-                    <Label for="address">Address</Label>
+                    <Label for="address">{{ $t('Address') }}</Label>
                     <Input id="address" v-model="form.address" />
                 </div>
                 <div class="grid gap-1.5 sm:col-span-3">
-                    <Label for="allergies">Drug allergies</Label>
+                    <Label for="allergies">{{ $t('Drug allergies') }}</Label>
                     <Input
                         id="allergies"
                         v-model="form.allergies"
-                        placeholder="Comma separated, e.g. Penicillin, Aspirin"
+                        :placeholder="
+                            $t('Comma separated, e.g. Penicillin, Aspirin')
+                        "
                     />
                 </div>
                 <div class="grid gap-1.5">
-                    <Label for="tin">TIN (for their own e-invoice)</Label>
+                    <Label for="tin">{{
+                        $t('TIN (for their own e-invoice)')
+                    }}</Label>
                     <Input
                         id="tin"
                         v-model="form.tin"
-                        placeholder="IG12345678901"
+                        :placeholder="$t('IG12345678901')"
                     />
                 </div>
                 <div class="grid gap-1.5">
-                    <Label for="brn">Business reg. no.</Label>
+                    <Label for="brn">{{ $t('Business reg. no.') }}</Label>
                     <Input id="brn" v-model="form.brn" />
                 </div>
                 <div class="flex items-end">
                     <Button
                         :disabled="form.processing"
                         class="bg-pink-600 hover:bg-pink-700"
-                        >Save customer</Button
+                        >{{ $t('Save customer') }}</Button
                     >
                 </div>
             </form>
@@ -220,7 +228,7 @@ const methodLabel: Record<string, string> = {
                                 : 'text-muted-foreground'
                         "
                     >
-                        Owes on account
+                        {{ $t('Owes on account') }}
                     </p>
                     <p class="tabular font-display text-4xl font-bold">
                         {{ rm(balance_sen) }}
@@ -233,13 +241,13 @@ const methodLabel: Record<string, string> = {
                     @submit.prevent="receive"
                 >
                     <h2 class="flex items-center gap-2 font-semibold">
-                        <HandCoins class="size-4 text-amber-600" /> Receive
-                        payment
+                        <HandCoins class="size-4 text-amber-600" />
+                        {{ $t('Receive payment') }}
                     </h2>
                     <Input
                         v-model="pay.amount"
                         inputmode="decimal"
-                        placeholder="Amount (RM)"
+                        :placeholder="$t('Amount (RM)')"
                     />
                     <InputError
                         :message="
@@ -255,19 +263,19 @@ const methodLabel: Record<string, string> = {
                                 v-for="m in ['cash', 'card', 'ewallet', 'bank']"
                                 :key="m"
                                 :value="m"
-                                >{{ methodLabel[m] }}</SelectItem
+                                >{{ $t(methodLabel[m]) }}</SelectItem
                             >
                         </SelectContent>
                     </Select>
                     <InputError :message="pay.errors.method" />
                     <Input
                         v-model="pay.reference"
-                        placeholder="Reference (optional)"
+                        :placeholder="$t('Reference (optional)')"
                     />
                     <Button
                         :disabled="pay.processing"
                         class="bg-amber-600 hover:bg-amber-700"
-                        >Record payment</Button
+                        >{{ $t('Record payment') }}</Button
                     >
                 </form>
             </aside>
@@ -275,9 +283,9 @@ const methodLabel: Record<string, string> = {
 
         <div class="grid gap-5 lg:grid-cols-2">
             <section class="rounded-xl border bg-card p-4">
-                <h2 class="mb-2 font-semibold">Purchases</h2>
+                <h2 class="mb-2 font-semibold">{{ $t('Purchases') }}</h2>
                 <p v-if="!sales.length" class="text-sm text-muted-foreground">
-                    No purchases yet.
+                    {{ $t('No purchases yet.') }}
                 </p>
                 <div
                     v-for="s in sales"
@@ -292,13 +300,15 @@ const methodLabel: Record<string, string> = {
                     <span class="text-muted-foreground">{{
                         formatDateTime(s.created_at)
                     }}</span>
-                    <span>{{ methodLabel[s.payment_method] }}</span>
+                    <span>{{ $t(methodLabel[s.payment_method]) }}</span>
                     <span class="tabular font-semibold">{{
                         rm(s.total_sen)
                     }}</span>
                 </div>
                 <template v-if="payments.length">
-                    <h3 class="mt-4 mb-1 font-semibold">Payments received</h3>
+                    <h3 class="mt-4 mb-1 font-semibold">
+                        {{ $t('Payments received') }}
+                    </h3>
                     <div
                         v-for="p in payments"
                         :key="p.id"
@@ -306,7 +316,8 @@ const methodLabel: Record<string, string> = {
                     >
                         <span>{{ formatDateTime(p.created_at) }}</span>
                         <span
-                            >{{ methodLabel[p.method] }} {{ p.reference }}</span
+                            >{{ $t(methodLabel[p.method]) }}
+                            {{ p.reference }}</span
                         >
                         <span
                             class="tabular font-semibold text-emerald-700 dark:text-emerald-300"
@@ -316,12 +327,12 @@ const methodLabel: Record<string, string> = {
                 </template>
             </section>
             <section class="rounded-xl border bg-card p-4">
-                <h2 class="mb-2 font-semibold">Prescriptions</h2>
+                <h2 class="mb-2 font-semibold">{{ $t('Prescriptions') }}</h2>
                 <p
                     v-if="!prescriptions.length"
                     class="text-sm text-muted-foreground"
                 >
-                    No prescriptions recorded.
+                    {{ $t('No prescriptions recorded.') }}
                 </p>
                 <div
                     v-for="p in prescriptions"
@@ -344,8 +355,12 @@ const methodLabel: Record<string, string> = {
                                 : 'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300',
                         ]"
                     >
-                        Dispensed {{ p.sales_count }} of
-                        {{ 1 + p.refills_allowed }}
+                        {{
+                            $t('Dispensed :done of :total', {
+                                done: p.sales_count,
+                                total: 1 + p.refills_allowed,
+                            })
+                        }}
                     </span>
                 </div>
             </section>

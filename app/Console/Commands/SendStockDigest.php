@@ -57,7 +57,7 @@ class SendStockDigest extends Command
 
             $recipients = User::query()->where('branch_id', $branch->id)->role(['owner', 'pharmacist'])->get();
             foreach ($recipients as $user) {
-                Mail::to($user)->send(new StockDigest($branch, $expiring, $low));
+                Mail::to($user)->locale($user->locale)->send(new StockDigest($branch, $expiring, $low));
             }
 
             $this->info("{$branch->name}: ".count($expiring).' expiring, '.count($low).' low, sent to '.$recipients->count());

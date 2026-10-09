@@ -57,19 +57,21 @@ const poll = () =>
 <template>
     <div class="flex flex-wrap items-center gap-2 text-sm">
         <FileCheck2 class="size-4 text-sky-600" />
-        <span v-if="!einvoice" class="text-muted-foreground">No e-invoice</span>
+        <span v-if="!einvoice" class="text-muted-foreground">{{
+            $t('No e-invoice')
+        }}</span>
         <template v-else>
             <span
                 :class="[
                     'rounded-full px-2 py-0.5 font-medium capitalize',
                     tones[einvoice.status],
                 ]"
-                >{{ einvoice.status }}</span
+                >{{ $t(einvoice.status) }}</span
             >
             <span
                 v-if="einvoice.environment === 'sandbox'"
                 class="text-xs text-muted-foreground"
-                >sandbox</span
+                >{{ $t('sandbox') }}</span
             >
             <a
                 v-if="einvoice.validation_url"
@@ -78,18 +80,18 @@ const poll = () =>
                 rel="noopener"
                 class="inline-flex items-center gap-1 text-sky-700 hover:underline dark:text-sky-300"
             >
-                Validation link <ExternalLink class="size-3.5" />
+                {{ $t('Validation link') }} <ExternalLink class="size-3.5" />
             </a>
             <Button
                 v-if="einvoice.status === 'submitted'"
                 size="sm"
                 variant="ghost"
                 @click="poll"
-                ><RefreshCw /> Check status</Button
+                ><RefreshCw /> {{ $t('Check status') }}</Button
             >
         </template>
         <Button v-if="canSubmit()" size="sm" variant="outline" @click="submit"
-            ><Send /> {{ submitLabel ?? 'Send to LHDN' }}</Button
+            ><Send /> {{ submitLabel ?? $t('Send to LHDN') }}</Button
         >
         <ul
             v-if="einvoice?.errors.length"

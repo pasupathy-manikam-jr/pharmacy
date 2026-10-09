@@ -67,7 +67,7 @@ class SaleController extends Controller
         $lines = array_map('intval', $data['lines']);
         $result = $refund->handle($user, $sale, $lines, $data['reason']);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => "Refunded {$result->number}."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Refunded :number.', ['number' => $result->number])]);
 
         return to_route('sales.show', $sale);
     }

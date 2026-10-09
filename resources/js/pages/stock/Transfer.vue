@@ -68,8 +68,12 @@ const submit = () =>
     >
         <PageHeader
             :back="{ href: stock(), label: 'stock' }"
-            title="Transfer stock"
-            description="Send batches to another branch. Expiry dates travel with the batch."
+            :title="$t('Transfer stock')"
+            :description="
+                $t(
+                    'Send batches to another branch. Expiry dates travel with the batch.',
+                )
+            "
             :icon="ArrowLeftRight"
             tone="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300"
         />
@@ -78,8 +82,11 @@ const submit = () =>
             v-if="!branches.length"
             class="rounded-xl border border-dashed p-6 text-muted-foreground"
         >
-            There’s only one branch. Add another under Branches to transfer
-            stock.
+            {{
+                $t(
+                    'There’s only one branch. Add another under Branches to transfer stock.',
+                )
+            }}
         </p>
 
         <template v-else>
@@ -87,7 +94,7 @@ const submit = () =>
                 class="grid gap-4 rounded-xl border bg-card p-5 sm:grid-cols-2"
             >
                 <div class="grid gap-1.5">
-                    <Label for="to">Send to</Label>
+                    <Label for="to">{{ $t('Send to') }}</Label>
                     <Select v-model="form.to_branch_id">
                         <SelectTrigger id="to" class="w-full"
                             ><SelectValue placeholder="Choose branch"
@@ -104,11 +111,11 @@ const submit = () =>
                     <InputError :message="form.errors.to_branch_id" />
                 </div>
                 <div class="grid gap-1.5">
-                    <Label for="note">Note</Label>
+                    <Label for="note">{{ $t('Note') }}</Label>
                     <Input
                         id="note"
                         v-model="form.note"
-                        placeholder="e.g. Weekly top-up"
+                        :placeholder="$t('e.g. Weekly top-up')"
                     />
                 </div>
             </div>
@@ -123,8 +130,8 @@ const submit = () =>
                         <Combobox
                             v-model="line.batch_id"
                             :options="options"
-                            placeholder="Choose batch"
-                            search-placeholder="Product or batch"
+                            :placeholder="$t('Choose batch')"
+                            :search-placeholder="$t('Product or batch')"
                         />
                         <InputError :message="err(i, 'batch_id')" />
                     </div>
@@ -132,7 +139,7 @@ const submit = () =>
                         <Input
                             v-model="line.qty"
                             inputmode="numeric"
-                            placeholder="Qty"
+                            :placeholder="$t('Qty')"
                         />
                         <InputError :message="err(i, 'qty')" />
                     </div>
@@ -141,7 +148,7 @@ const submit = () =>
                         variant="ghost"
                         size="icon"
                         :disabled="form.lines.length === 1"
-                        aria-label="Remove line"
+                        :aria-label="$t('Remove line')"
                         @click="form.lines.splice(i, 1)"
                         ><Trash2 class="text-rose-500"
                     /></Button>
@@ -157,12 +164,12 @@ const submit = () =>
                         type="button"
                         variant="outline"
                         @click="form.lines.push({ batch_id: null, qty: '' })"
-                        ><Plus /> Add line</Button
+                        ><Plus /> {{ $t('Add line') }}</Button
                     >
                     <Button
                         :disabled="form.processing"
                         class="bg-orange-600 hover:bg-orange-700"
-                        >Transfer stock</Button
+                        >{{ $t('Transfer stock') }}</Button
                     >
                 </div>
             </div>

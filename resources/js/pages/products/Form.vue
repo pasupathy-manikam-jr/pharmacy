@@ -100,13 +100,15 @@ function submit() {
 </script>
 
 <template>
-    <Head :title="p ? `Edit ${p.name}` : 'Add product'" />
+    <Head :title="p ? $t('Edit :name', { name: p.name }) : $t('Add product')" />
 
     <div class="flex max-w-3xl flex-col gap-6 p-4 md:p-6">
         <PageHeader
             :back="{ href: index(), label: 'products' }"
-            :title="p ? `Edit ${p.name}` : 'Add product'"
-            description="Prices are per unit, including the smallest unit you sell."
+            :title="p ? $t('Edit :name', { name: p.name }) : $t('Add product')"
+            :description="
+                $t('Prices are per unit, including the smallest unit you sell.')
+            "
             :icon="Pill"
             tone="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300"
         />
@@ -123,7 +125,7 @@ function submit() {
                     class="size-28 rounded-xl border bg-white"
                 />
                 <div class="grid gap-2">
-                    <Label for="image">Product photo</Label>
+                    <Label for="image">{{ $t('Product photo') }}</Label>
                     <div class="flex flex-wrap gap-2">
                         <Button
                             type="button"
@@ -134,7 +136,9 @@ function submit() {
                             <label for="image" class="cursor-pointer"
                                 ><ImageUp />
                                 {{
-                                    preview ? 'Replace photo' : 'Choose photo'
+                                    preview
+                                        ? $t('Replace photo')
+                                        : $t('Choose photo')
                                 }}</label
                             >
                         </Button>
@@ -145,7 +149,7 @@ function submit() {
                             size="sm"
                             class="text-rose-600"
                             @click="clearImage"
-                            ><Trash2 /> Remove</Button
+                            ><Trash2 /> {{ $t('Remove') }}</Button
                         >
                     </div>
                     <input
@@ -156,42 +160,55 @@ function submit() {
                         @change="pick"
                     />
                     <p class="text-sm text-muted-foreground">
-                        JPG, PNG or WebP, up to 2 MB. Shown on the POS and
-                        product cards.
+                        {{
+                            $t(
+                                'JPG, PNG or WebP, up to 2 MB. Shown on the POS and product cards.',
+                            )
+                        }}
                     </p>
                     <InputError :message="form.errors.image" />
                 </div>
             </div>
             <div class="grid gap-2 sm:col-span-2">
-                <Label for="name">Brand / product name</Label>
-                <Input id="name" v-model="form.name" placeholder="Panadol" />
+                <Label for="name">{{ $t('Brand / product name') }}</Label>
+                <Input
+                    id="name"
+                    v-model="form.name"
+                    :placeholder="$t('Panadol')"
+                />
                 <InputError :message="form.errors.name" />
             </div>
             <div class="grid gap-2">
-                <Label for="generic_name">Generic name</Label>
+                <Label for="generic_name">{{ $t('Generic name') }}</Label>
                 <Input
                     id="generic_name"
                     v-model="form.generic_name"
-                    placeholder="Paracetamol"
+                    :placeholder="$t('Paracetamol')"
                 />
                 <InputError :message="form.errors.generic_name" />
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div class="grid gap-2">
-                    <Label for="strength">Strength</Label>
+                    <Label for="strength">{{ $t('Strength') }}</Label>
                     <Input
                         id="strength"
                         v-model="form.strength"
-                        placeholder="500 mg"
+                        :placeholder="$t('500 mg')"
                     />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="form">Form</Label>
-                    <Input id="form" v-model="form.form" placeholder="Tablet" />
+                    <Label for="form">{{ $t('Form') }}</Label>
+                    <Input
+                        id="form"
+                        v-model="form.form"
+                        :placeholder="$t('Tablet')"
+                    />
                 </div>
             </div>
             <div class="grid gap-2 sm:col-span-2">
-                <Label for="poison_group">Poison classification</Label>
+                <Label for="poison_group">{{
+                    $t('Poison classification')
+                }}</Label>
                 <Select v-model="form.poison_group">
                     <SelectTrigger id="poison_group" class="w-full">
                         <SelectValue />
@@ -202,35 +219,38 @@ function submit() {
                             :key="g"
                             :value="g"
                         >
-                            {{ groupLabels[g] }}
+                            {{ $t(groupLabels[g]) }}
                         </SelectItem>
                     </SelectContent>
                 </Select>
                 <p class="text-sm text-muted-foreground">
-                    Anything other than “not a poison” needs a pharmacist at the
-                    counter and is written to a register.
+                    {{
+                        $t(
+                            'Anything other than “not a poison” needs a pharmacist at the counter and is written to a register.',
+                        )
+                    }}
                 </p>
                 <InputError :message="form.errors.poison_group" />
             </div>
             <div class="grid gap-2">
-                <Label for="barcode">Barcode</Label>
+                <Label for="barcode">{{ $t('Barcode') }}</Label>
                 <Input
                     id="barcode"
                     v-model="form.barcode"
-                    placeholder="Scan or type"
+                    :placeholder="$t('Scan or type')"
                 />
                 <InputError :message="form.errors.barcode" />
             </div>
             <div class="grid gap-2">
-                <Label for="mal_reg_no">MAL registration no.</Label>
+                <Label for="mal_reg_no">{{ $t('MAL registration no.') }}</Label>
                 <Input
                     id="mal_reg_no"
                     v-model="form.mal_reg_no"
-                    placeholder="MAL19990001A"
+                    :placeholder="$t('MAL19990001A')"
                 />
             </div>
             <div class="grid gap-2">
-                <Label for="price">Selling price (RM)</Label>
+                <Label for="price">{{ $t('Selling price (RM)') }}</Label>
                 <Input
                     id="price"
                     v-model="form.price"
@@ -241,12 +261,16 @@ function submit() {
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div class="grid gap-2">
-                    <Label for="unit">Unit</Label>
-                    <Input id="unit" v-model="form.unit" placeholder="tablet" />
+                    <Label for="unit">{{ $t('Unit') }}</Label>
+                    <Input
+                        id="unit"
+                        v-model="form.unit"
+                        :placeholder="$t('tablet')"
+                    />
                     <InputError :message="form.errors.unit" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="tax_rate">Tax (%)</Label>
+                    <Label for="tax_rate">{{ $t('Tax (%)') }}</Label>
                     <Input
                         id="tax_rate"
                         v-model="form.tax_rate"
@@ -256,7 +280,9 @@ function submit() {
                 </div>
             </div>
             <div class="grid gap-2">
-                <Label for="reorder_level">Reorder when stock reaches</Label>
+                <Label for="reorder_level">{{
+                    $t('Reorder when stock reaches')
+                }}</Label>
                 <Input
                     id="reorder_level"
                     v-model="form.reorder_level"
@@ -266,14 +292,14 @@ function submit() {
             </div>
             <div class="flex items-center gap-2 self-end pb-2">
                 <Checkbox id="is_active" v-model="form.is_active" />
-                <Label for="is_active">Available for sale</Label>
+                <Label for="is_active">{{ $t('Available for sale') }}</Label>
             </div>
             <div class="sm:col-span-2">
                 <Button
                     :disabled="form.processing"
                     class="bg-indigo-600 hover:bg-indigo-700"
                 >
-                    {{ p ? 'Save changes' : 'Add product' }}
+                    {{ p ? $t('Save changes') : $t('Add product') }}
                 </Button>
             </div>
         </form>

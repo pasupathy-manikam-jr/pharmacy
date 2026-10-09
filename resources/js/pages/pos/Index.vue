@@ -242,11 +242,14 @@ function charge() {
             class="max-w-xl rounded-2xl border border-green-200 bg-green-50/60 p-6 dark:border-green-500/30 dark:bg-green-500/5"
         >
             <h1 class="text-xl font-semibold">
-                Open your shift to start selling
+                {{ $t('Open your shift to start selling') }}
             </h1>
             <p class="mt-1 mb-5 text-muted-foreground">
-                Count the float in the drawer. You’ll count it again when you
-                close.
+                {{
+                    $t(
+                        'Count the float in the drawer. You’ll count it again when you close.',
+                    )
+                }}
             </p>
             <OpenShiftForm />
         </section>
@@ -263,7 +266,7 @@ function charge() {
                     v-model="query"
                     v-focus
                     class="h-12 rounded-xl border-violet-200 pl-11 text-base focus-visible:border-violet-500 focus-visible:ring-violet-500/30 dark:border-violet-500/30"
-                    placeholder="Scan a barcode or type a product name"
+                    :placeholder="$t('Scan a barcode or type a product name')"
                     @keydown.enter.prevent="onEnter"
                 />
             </div>
@@ -310,7 +313,7 @@ function charge() {
                             {{
                                 Number(p.on_hand) > 0
                                     ? `${p.on_hand} in stock`
-                                    : 'Out of stock'
+                                    : $t('Out of stock')
                             }}
                         </span>
                         <span class="tabular w-24 text-right font-semibold">{{
@@ -323,7 +326,7 @@ function charge() {
                 v-else-if="query"
                 class="rounded-xl border border-dashed p-6 text-center text-muted-foreground"
             >
-                No product matches “{{ query }}”.
+                {{ $t('No product matches “:query”.', { query }) }}
             </p>
 
             <!-- Cart -->
@@ -332,7 +335,7 @@ function charge() {
                     v-if="!cart.length"
                     class="p-10 text-center text-muted-foreground"
                 >
-                    Scan an item to start a sale.
+                    {{ $t('Scan an item to start a sale.') }}
                 </div>
                 <div
                     v-for="(line, i) in cart"
@@ -358,7 +361,9 @@ function charge() {
                             v-if="line.product.poison_group !== 'none'"
                             v-model="line.dosage"
                             class="mt-2 h-8"
-                            placeholder="Directions, e.g. 1 tab 3x daily after food"
+                            :placeholder="
+                                $t('Directions, e.g. 1 tab 3x daily after food')
+                            "
                         />
                     </div>
                     <div class="flex items-center gap-1">
@@ -367,7 +372,7 @@ function charge() {
                             variant="outline"
                             size="icon"
                             class="size-8"
-                            aria-label="Decrease"
+                            :aria-label="$t('Decrease')"
                             :disabled="line.qty <= 1"
                             @click="line.qty--"
                             ><Minus
@@ -380,7 +385,7 @@ function charge() {
                             variant="outline"
                             size="icon"
                             class="size-8"
-                            aria-label="Increase"
+                            :aria-label="$t('Increase')"
                             :disabled="line.qty >= Number(line.product.on_hand)"
                             @click="line.qty++"
                             ><Plus
@@ -394,7 +399,9 @@ function charge() {
                         variant="ghost"
                         size="icon"
                         class="size-8"
-                        :aria-label="`Remove ${line.product.name}`"
+                        :aria-label="
+                            $t('Remove :name', { name: line.product.name })
+                        "
                         @click="cart.splice(i, 1)"
                         ><X class="text-rose-500"
                     /></Button>
@@ -410,47 +417,55 @@ function charge() {
                 class="flex gap-2 rounded-xl bg-rose-600 p-4 text-sm text-white"
             >
                 <TriangleAlert class="size-5 shrink-0" />
-                This sale has a scheduled poison. A pharmacist must log in to
-                complete it.
+                {{
+                    $t(
+                        'This sale has a scheduled poison. A pharmacist must log in to complete it.',
+                    )
+                }}
             </div>
 
             <div class="flex flex-col gap-3 rounded-xl border bg-card p-4">
-                <h2 class="font-semibold">Customer</h2>
+                <h2 class="font-semibold">{{ $t('Customer') }}</h2>
                 <Combobox
                     v-model="form.customer_id"
                     :options="customerOptions"
-                    placeholder="Walk-in customer"
-                    search-placeholder="Name or MyKad"
+                    :placeholder="$t('Walk-in customer')"
+                    :search-placeholder="$t('Name or MyKad')"
                 />
                 <div v-if="!form.customer_id && hasPoison" class="grid gap-2">
                     <p class="text-sm text-muted-foreground">
-                        Or record a new customer for the register:
+                        {{ $t('Or record a new customer for the register:') }}
                     </p>
                     <Input
                         v-model="form.customer.name"
-                        placeholder="Full name"
+                        :placeholder="$t('Full name')"
                     />
                     <InputError :message="errors['customer.name']" />
                     <Input
                         v-model="form.customer.ic_no"
-                        placeholder="MyKad / passport"
+                        :placeholder="$t('MyKad / passport')"
                     />
                     <Input
                         v-model="form.customer.address"
-                        placeholder="Address"
+                        :placeholder="$t('Address')"
                     />
                 </div>
                 <div
                     v-if="selectedCustomer?.allergies"
                     class="rounded-lg bg-rose-50 p-3 text-sm text-rose-800 dark:bg-rose-500/10 dark:text-rose-300"
                 >
-                    <b>Allergies:</b> {{ selectedCustomer.allergies }}
+                    <b>{{ $t('Allergies:') }}</b>
+                    {{ selectedCustomer.allergies }}
                     <p
                         v-for="hit in allergyHits"
                         :key="hit.product.id"
                         class="mt-1 font-semibold"
                     >
-                        Check {{ hit.product.name }} before dispensing.
+                        {{
+                            $t('Check :product before dispensing.', {
+                                product: hit.product.name,
+                            })
+                        }}
                     </p>
                 </div>
             </div>
@@ -460,31 +475,31 @@ function charge() {
                 class="flex flex-col gap-3 rounded-xl border border-rose-200 bg-rose-50/50 p-4 dark:border-rose-500/30 dark:bg-rose-500/5"
             >
                 <h2 class="font-semibold text-rose-800 dark:text-rose-300">
-                    Prescription
+                    {{ $t('Prescription') }}
                 </h2>
                 <Input
                     v-model="form.prescription.prescriber_name"
-                    placeholder="Prescriber name"
+                    :placeholder="$t('Prescriber name')"
                 />
                 <InputError :message="errors['prescription.prescriber_name']" />
                 <div class="grid grid-cols-2 gap-2">
                     <Input
                         v-model="form.prescription.prescriber_reg_no"
-                        placeholder="MMC no."
+                        :placeholder="$t('MMC no.')"
                     />
                     <DatePicker
                         v-model="form.prescription.issued_on"
-                        placeholder="Date issued"
+                        :placeholder="$t('Date issued')"
                     />
                 </div>
                 <InputError :message="errors['prescription.issued_on']" />
                 <Input
                     v-model="form.prescription.clinic"
-                    placeholder="Clinic / hospital"
+                    :placeholder="$t('Clinic / hospital')"
                 />
                 <Input
                     v-model="form.prescription.diagnosis"
-                    placeholder="Diagnosis"
+                    :placeholder="$t('Diagnosis')"
                 />
             </div>
 
@@ -502,12 +517,12 @@ function charge() {
                         @click="form.payment_method = m.value"
                     >
                         <component :is="m.icon" class="size-5" />
-                        {{ m.label }}
+                        {{ $t(m.label) }}
                     </button>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div class="grid gap-1.5">
-                        <Label for="discount">Discount (RM)</Label>
+                        <Label for="discount">{{ $t('Discount (RM)') }}</Label>
                         <Input
                             id="discount"
                             v-model="form.discount"
@@ -519,7 +534,9 @@ function charge() {
                         v-if="form.payment_method === 'cash'"
                         class="grid gap-1.5"
                     >
-                        <Label for="tendered">Cash received (RM)</Label>
+                        <Label for="tendered">{{
+                            $t('Cash received (RM)')
+                        }}</Label>
                         <Input
                             id="tendered"
                             v-model="form.tendered"
@@ -535,21 +552,25 @@ function charge() {
                 <dl
                     class="tabular grid grid-cols-2 gap-y-1 border-t pt-3 text-sm"
                 >
-                    <dt class="text-muted-foreground">Subtotal</dt>
+                    <dt class="text-muted-foreground">{{ $t('Subtotal') }}</dt>
                     <dd class="text-right">{{ rm(subtotal) }}</dd>
                     <template v-if="tax"
-                        ><dt class="text-muted-foreground">Tax</dt>
+                        ><dt class="text-muted-foreground">{{ $t('Tax') }}</dt>
                         <dd class="text-right">{{ rm(tax) }}</dd></template
                     >
                     <template v-if="toSen(form.discount)"
-                        ><dt class="text-muted-foreground">Discount</dt>
+                        ><dt class="text-muted-foreground">
+                            {{ $t('Discount') }}
+                        </dt>
                         <dd class="text-right">
                             −{{ rm(toSen(form.discount)) }}
                         </dd></template
                     >
                     <template
                         v-if="form.payment_method === 'cash' && form.tendered"
-                        ><dt class="text-muted-foreground">Change</dt>
+                        ><dt class="text-muted-foreground">
+                            {{ $t('Change') }}
+                        </dt>
                         <dd
                             :class="[
                                 'text-right font-semibold',
@@ -572,7 +593,7 @@ function charge() {
                     "
                     @click="charge"
                 >
-                    Charge {{ rm(total) }}
+                    {{ $t('Charge :amount', { amount: rm(total) }) }}
                 </Button>
             </div>
         </aside>

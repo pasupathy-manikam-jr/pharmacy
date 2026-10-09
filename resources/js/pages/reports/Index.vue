@@ -14,6 +14,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { t } from '@/lib/i18n';
 import { formatDate, rm } from '@/lib/money';
 import { index } from '@/routes/reports';
 import type { SortState } from '@/types';
@@ -83,15 +84,19 @@ const cell = (c: string, v: string | number | null) =>
           : c === 'day'
             ? formatDate(String(v))
             : c === 'method'
-              ? ((
-                    {
-                        cash: 'Cash',
-                        card: 'Card',
-                        ewallet: 'E-wallet',
-                        credit: 'On account',
-                    } as Record<string, string>
-                )[String(v)] ?? v)
-              : v;
+              ? t(
+                    (
+                        {
+                            cash: 'Cash',
+                            card: 'Card',
+                            ewallet: 'E-wallet',
+                            credit: 'On account',
+                        } as Record<string, string>
+                    )[String(v)] ?? String(v),
+                )
+              : c === 'reason'
+                ? t(String(v).replace('_', ' '))
+                : v;
 const totals = computed(() =>
     Object.fromEntries(
         columns.value
@@ -121,13 +126,19 @@ const tabs = [
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Reports"
-            description="Net of refunds. Costs come from the batch each unit was sold from."
+            :title="$t('Reports')"
+            :description="
+                $t(
+                    'Net of refunds. Costs come from the batch each unit was sold from.',
+                )
+            "
             :icon="BarChart3"
             tone="bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300"
         >
             <Button variant="outline" as-child
-                ><a :href="csvUrl"><Download /> Download CSV</a></Button
+                ><a :href="csvUrl"
+                    ><Download /> {{ $t('Download CSV') }}</a
+                ></Button
             >
         </PageHeader>
 
@@ -145,12 +156,12 @@ const tabs = [
                     ]"
                     @click="f.report = String(key)"
                 >
-                    {{ label }}
+                    {{ $t(label) }}
                 </button>
             </div>
             <template v-if="f.report !== 'valuation'">
                 <div class="w-44"><DatePicker v-model="f.from" /></div>
-                <span class="text-muted-foreground">to</span>
+                <span class="text-muted-foreground">{{ $t('to') }}</span>
                 <div class="w-44"><DatePicker v-model="f.to" /></div>
             </template>
         </div>
@@ -167,7 +178,7 @@ const tabs = [
                             :align="isNumber(c) ? 'right' : undefined"
                             local
                             @sort="sortBy"
-                            >{{ heading(c) }}</SortableHead
+                            >{{ $t(heading(c)) }}</SortableHead
                         >
                     </TableRow>
                 </TableHeader>
@@ -175,7 +186,7 @@ const tabs = [
                     <TableRow v-if="!rows.length">
                         <TableCell
                             class="py-10 text-center text-muted-foreground"
-                            >Nothing in this period.</TableCell
+                            >{{ $t('Nothing in this period.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow v-for="(r, i) in sortedRows" :key="i">
@@ -206,7 +217,7 @@ const tabs = [
                         >
                             {{
                                 i === 0
-                                    ? 'Total'
+                                    ? $t('Total')
                                     : c in totals
                                       ? isMoney(c)
                                           ? rm(totals[c] ?? 0)

@@ -30,6 +30,6 @@ const labels: Record<PoisonGroup, string> = {
             'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
             tones[group],
         ]"
-        >{{ labels[group] }}</span
+        >{{ $t(labels[group]) }}</span
     >
 </template>

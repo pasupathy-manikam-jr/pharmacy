@@ -96,15 +96,21 @@ watch(t, (v) =>
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
             :back="{ href: stock(), label: 'stock' }"
-            title="Stock movements"
-            description="Every change to stock, newest first. Nothing here can be edited."
+            :title="$t('Stock movements')"
+            :description="
+                $t(
+                    'Every change to stock, newest first. Nothing here can be edited.',
+                )
+            "
             :icon="History"
             tone="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300"
         >
             <Select v-model="t">
                 <SelectTrigger class="w-48"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">All movements</SelectItem>
+                    <SelectItem value="all">{{
+                        $t('All movements')
+                    }}</SelectItem>
                     <SelectItem v-for="(v, k) in types" :key="k" :value="k">{{
                         v.label
                     }}</SelectItem>
@@ -116,31 +122,31 @@ watch(t, (v) =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="created_at" :sort="sort"
-                            >When</SortableHead
-                        >
-                        <SortableHead name="product" :sort="sort"
-                            >Product</SortableHead
-                        >
-                        <SortableHead name="batch_no" :sort="sort"
-                            >Batch</SortableHead
-                        >
-                        <SortableHead name="type" :sort="sort"
-                            >What</SortableHead
-                        >
+                        <SortableHead name="created_at" :sort="sort">{{
+                            $t('When')
+                        }}</SortableHead>
+                        <SortableHead name="product" :sort="sort">{{
+                            $t('Product')
+                        }}</SortableHead>
+                        <SortableHead name="batch_no" :sort="sort">{{
+                            $t('Batch')
+                        }}</SortableHead>
+                        <SortableHead name="type" :sort="sort">{{
+                            $t('What')
+                        }}</SortableHead>
                         <SortableHead
                             name="qty_delta"
                             :sort="sort"
                             align="right"
-                            >Change</SortableHead
+                            >{{ $t('Change') }}</SortableHead
                         >
                         <SortableHead
                             name="qty_after"
                             :sort="sort"
                             align="right"
-                            >Left</SortableHead
+                            >{{ $t('Left') }}</SortableHead
                         >
-                        <TableHead>Note</TableHead>
+                        <TableHead>{{ $t('Note') }}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -148,7 +154,7 @@ watch(t, (v) =>
                         <TableCell
                             colspan="7"
                             class="py-10 text-center text-muted-foreground"
-                            >No movements.</TableCell
+                            >{{ $t('No movements.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow v-for="m in movements.data" :key="m.id">
@@ -168,12 +174,12 @@ watch(t, (v) =>
                                     'rounded-full px-2 py-0.5 text-sm font-medium',
                                     types[m.type]?.tone,
                                 ]"
-                                >{{ types[m.type]?.label ?? m.type }}</span
+                                >{{ $t(types[m.type]?.label ?? m.type) }}</span
                             >
                             <span
                                 v-if="m.reason"
                                 class="ml-1 text-sm text-muted-foreground"
-                                >{{ m.reason.replace('_', ' ') }}</span
+                                >{{ $t(m.reason.replace('_', ' ')) }}</span
                             >
                         </TableCell>
                         <TableCell

@@ -72,7 +72,7 @@ class StockController extends Controller
 
         $adjust->handle($user, $batch, $delta, $data['reason'], $data['note'] ?? null);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => $delta === 0 ? 'Count matches, nothing changed.' : 'Stock adjusted.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => $delta === 0 ? __('Count matches, nothing changed.') : __('Stock adjusted.')]);
 
         return back();
     }
@@ -133,7 +133,7 @@ class StockController extends Controller
 
         $transfer->handle($user, Branch::query()->findOrFail($data['to_branch_id']), $data['lines'], $data['note'] ?? null);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Stock transferred.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Stock transferred.')]);
 
         return to_route('stock.movements');
     }

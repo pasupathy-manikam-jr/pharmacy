@@ -73,7 +73,7 @@ class GoodsReceiptController extends Controller
         $user = $request->user();
         $receive->handle($user, $data);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Stock received.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Stock received.')]);
 
         return to_route('receipts.index');
     }

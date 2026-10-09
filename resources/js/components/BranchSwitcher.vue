@@ -36,7 +36,9 @@ const go = (id: number) =>
                     </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" class="w-60">
-                    <DropdownMenuLabel>Switch branch</DropdownMenuLabel>
+                    <DropdownMenuLabel>{{
+                        $t('Switch branch')
+                    }}</DropdownMenuLabel>
                     <DropdownMenuItem
                         v-for="b in branches"
                         :key="b.id"

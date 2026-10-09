@@ -104,8 +104,10 @@ function saveEdit() {
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Staff"
-            description="Who can log in at this branch, and what they can do."
+            :title="$t('Staff')"
+            :description="
+                $t('Who can log in at this branch, and what they can do.')
+            "
             :icon="UserCog"
             tone="bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300"
         />
@@ -116,17 +118,17 @@ function saveEdit() {
             @submit.prevent="submit"
         >
             <div class="grid gap-1.5">
-                <Label for="u-name">Name</Label>
+                <Label for="u-name">{{ $t('Name') }}</Label>
                 <Input id="u-name" v-model="form.name" />
                 <InputError :message="form.errors.name" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="u-email">Email</Label>
+                <Label for="u-email">{{ $t('Email') }}</Label>
                 <Input id="u-email" v-model="form.email" autocomplete="off" />
                 <InputError :message="form.errors.email" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="u-password">Password</Label>
+                <Label for="u-password">{{ $t('Password') }}</Label>
                 <PasswordInput
                     id="u-password"
                     v-model="form.password"
@@ -135,14 +137,14 @@ function saveEdit() {
                 <InputError :message="form.errors.password" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="u-role">Role</Label>
+                <Label for="u-role">{{ $t('Role') }}</Label>
                 <Select v-model="form.role">
                     <SelectTrigger id="u-role" class="w-full"
                         ><SelectValue
                     /></SelectTrigger>
                     <SelectContent>
                         <SelectItem v-for="r in roles" :key="r" :value="r">{{
-                            roleInfo[r].label
+                            $t(roleInfo[r].label)
                         }}</SelectItem>
                     </SelectContent>
                 </Select>
@@ -152,11 +154,11 @@ function saveEdit() {
                 <Button
                     :disabled="form.processing"
                     class="w-full bg-cyan-600 hover:bg-cyan-700"
-                    >Add staff member</Button
+                    >{{ $t('Add staff member') }}</Button
                 >
             </div>
             <p class="text-sm text-muted-foreground sm:col-span-5">
-                {{ roleInfo[form.role].text }}
+                {{ $t(roleInfo[form.role].text) }}
             </p>
         </form>
 
@@ -164,9 +166,9 @@ function saveEdit() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Role</TableHead>
+                        <TableHead>{{ $t('Name') }}</TableHead>
+                        <TableHead>{{ $t('Email') }}</TableHead>
+                        <TableHead>{{ $t('Role') }}</TableHead>
                         <TableHead class="col-action" />
                     </TableRow>
                 </TableHeader>
@@ -177,7 +179,7 @@ function saveEdit() {
                             <span
                                 v-if="u.id === me"
                                 class="text-muted-foreground"
-                                >(you)</span
+                                >{{ $t('(you)') }}</span
                             >
                         </TableCell>
                         <TableCell>{{ u.email }}</TableCell>
@@ -188,7 +190,7 @@ function saveEdit() {
                                     'rounded-full px-2 py-0.5 text-sm font-medium',
                                     roleInfo[u.role].tone,
                                 ]"
-                                >{{ roleInfo[u.role].label }}</span
+                                >{{ $t(roleInfo[u.role].label) }}</span
                             >
                         </TableCell>
                         <TableCell class="col-action text-right">
@@ -196,7 +198,8 @@ function saveEdit() {
                                 variant="ghost"
                                 size="sm"
                                 @click="openEdit(u)"
-                                ><KeyRound /> Change role or password</Button
+                                ><KeyRound />
+                                {{ $t('Change role or password') }}</Button
                             >
                         </TableCell>
                     </TableRow>
@@ -210,15 +213,16 @@ function saveEdit() {
         >
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Update {{ editing?.name }}</DialogTitle>
-                    <DialogDescription
-                        >Leave the password blank to keep the current
-                        one.</DialogDescription
-                    >
+                    <DialogTitle>{{
+                        $t('Update :name', { name: editing?.name ?? '' })
+                    }}</DialogTitle>
+                    <DialogDescription>{{
+                        $t('Leave the password blank to keep the current one.')
+                    }}</DialogDescription>
                 </DialogHeader>
                 <form class="grid gap-4" novalidate @submit.prevent="saveEdit">
                     <div class="grid gap-1.5">
-                        <Label for="e-role">Role</Label>
+                        <Label for="e-role">{{ $t('Role') }}</Label>
                         <Select v-model="edit.role">
                             <SelectTrigger id="e-role" class="w-full"
                                 ><SelectValue
@@ -228,14 +232,14 @@ function saveEdit() {
                                     v-for="r in roles"
                                     :key="r"
                                     :value="r"
-                                    >{{ roleInfo[r].label }}</SelectItem
+                                    >{{ $t(roleInfo[r].label) }}</SelectItem
                                 >
                             </SelectContent>
                         </Select>
                         <InputError :message="edit.errors.role" />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="e-password">New password</Label>
+                        <Label for="e-password">{{ $t('New password') }}</Label>
                         <PasswordInput
                             id="e-password"
                             v-model="edit.password"
@@ -248,12 +252,12 @@ function saveEdit() {
                             type="button"
                             variant="outline"
                             @click="editing = null"
-                            >Cancel</Button
+                            >{{ $t('Cancel') }}</Button
                         >
                         <Button
                             :disabled="edit.processing"
                             class="bg-cyan-600 hover:bg-cyan-700"
-                            >Save changes</Button
+                            >{{ $t('Save changes') }}</Button
                         >
                     </DialogFooter>
                 </form>

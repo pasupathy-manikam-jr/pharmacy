@@ -84,7 +84,7 @@ function fill(email: unknown) {
                 v-if="demoLogins.length"
                 class="grid min-w-0 gap-3 rounded-lg border bg-muted/50 p-4"
             >
-                <Label id="quick-login">Quick login</Label>
+                <Label id="quick-login">{{ $t('Quick login') }}</Label>
                 <RadioGroup
                     aria-labelledby="quick-login"
                     @update:model-value="fill"
@@ -106,14 +106,14 @@ function fill(email: unknown) {
                                 'ml-auto shrink-0 rounded-full px-2 py-0.5 text-xs font-medium capitalize',
                                 roleTone[login.role],
                             ]"
-                            >{{ login.role }}</span
+                            >{{ $t(login.role) }}</span
                         >
                     </Label>
                 </RadioGroup>
             </div>
 
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label for="email">{{ $t('Email address') }}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -121,21 +121,21 @@ function fill(email: unknown) {
                     v-focus
                     :tabindex="1"
                     autocomplete="email"
-                    placeholder="email@example.com"
+                    :placeholder="$t('email@example.com')"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
+                    <Label for="password">{{ $t('Password') }}</Label>
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
                         class="text-sm"
                         :tabindex="5"
                     >
-                        Forgot your password?
+                        {{ $t('Forgot your password?') }}
                     </TextLink>
                 </div>
                 <PasswordInput
@@ -143,7 +143,7 @@ function fill(email: unknown) {
                     name="password"
                     :tabindex="2"
                     autocomplete="current-password"
-                    placeholder="Password"
+                    :placeholder="$t('Password')"
                 />
                 <InputError :message="errors.password" />
             </div>
@@ -151,7 +151,7 @@ function fill(email: unknown) {
             <div class="flex items-center justify-between">
                 <Label for="remember" class="flex items-center space-x-3">
                     <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
+                    <span>{{ $t('Remember me') }}</span>
                 </Label>
             </div>
 
@@ -163,7 +163,7 @@ function fill(email: unknown) {
                 data-test="login-button"
             >
                 <Spinner v-if="processing" />
-                Log in
+                {{ $t('Log in') }}
             </Button>
         </div>
     </Form>

@@ -17,7 +17,7 @@ class StockDigest extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: "{$this->branch->name}: ".count($this->expiring).' expiring, '.count($this->low).' to reorder');
+        return new Envelope(subject: __(':branch: :expiring expiring, :low to reorder', ['branch' => $this->branch->name, 'expiring' => count($this->expiring), 'low' => count($this->low)]));
     }
 
     public function content(): Content

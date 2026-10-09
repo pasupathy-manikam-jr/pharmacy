@@ -1,10 +1,23 @@
-const myr = new Intl.NumberFormat('en-MY', {
-    style: 'currency',
-    currency: 'MYR',
-});
+import { intlLocale } from '@/lib/i18n';
 
-/** 1250 → "RM 12.50" */
-export const rm = (sen: number): string => myr.format(sen / 100);
+const formatters = new Map<string, Intl.NumberFormat>();
+
+/**
+ * 1250 → "RM 12.50". Always "RM" (some locales would print "MYR"), digits in the
+ * interface language's number style.
+ */
+export const rm = (sen: number): string => {
+    const locale = intlLocale();
+    let f = formatters.get(locale);
+    if (!f) {
+        f = new Intl.NumberFormat(locale, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+        formatters.set(locale, f);
+    }
+    return `${sen < 0 ? '-' : ''}RM ${f.format(Math.abs(sen) / 100)}`;
+};
 
 /** "12.5" → 1250; blank or invalid → 0 */
 export const toSen = (value: string | number | null | undefined): number => {
@@ -17,12 +30,12 @@ export const fromSen = (sen: number): string => (sen / 100).toFixed(2);
 
 export const formatDate = (iso: string): string =>
     new Date(iso.length === 10 ? `${iso}T00:00:00` : iso).toLocaleDateString(
-        'en-MY',
+        intlLocale(),
         { day: '2-digit', month: 'short', year: 'numeric' },
     );
 
 export const formatDateTime = (iso: string): string =>
-    new Date(iso).toLocaleString('en-MY', {
+    new Date(iso).toLocaleString(intlLocale(), {
         day: '2-digit',
         month: 'short',
         year: 'numeric',

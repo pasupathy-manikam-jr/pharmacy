@@ -107,7 +107,7 @@ class PurchaseOrderController extends Controller
 
         $allowed = ['draft' => ['ordered', 'cancelled'], 'ordered' => ['cancelled']];
         if (! in_array($status, $allowed[$purchaseOrder->status] ?? [], true)) {
-            throw ValidationException::withMessages(['status' => "A {$purchaseOrder->status} order can’t be marked {$status}."]);
+            throw ValidationException::withMessages(['status' => __('A :from order can’t be marked :to.', ['from' => __($purchaseOrder->status), 'to' => __($status)])]);
         }
 
         $purchaseOrder->update(['status' => $status]);

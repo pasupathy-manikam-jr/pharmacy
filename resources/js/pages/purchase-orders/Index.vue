@@ -52,13 +52,19 @@ const tone = {
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Purchase orders"
-            description="What you’ve asked suppliers for. Receive a delivery against its order."
+            :title="$t('Purchase orders')"
+            :description="
+                $t(
+                    'What you’ve asked suppliers for. Receive a delivery against its order.',
+                )
+            "
             :icon="ShoppingCart"
             tone="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
         >
             <Button as-child class="bg-blue-600 hover:bg-blue-700"
-                ><Link :href="create()"><Plus /> New order</Link></Button
+                ><Link :href="create()"
+                    ><Plus /> {{ $t('New order') }}</Link
+                ></Button
             >
         </PageHeader>
 
@@ -66,28 +72,30 @@ const tone = {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="number" :sort="sort"
-                            >Order</SortableHead
-                        >
-                        <SortableHead name="supplier" :sort="sort"
-                            >Supplier</SortableHead
-                        >
-                        <SortableHead name="created_at" :sort="sort"
-                            >Created</SortableHead
-                        >
-                        <SortableHead name="expected_on" :sort="sort"
-                            >Expected</SortableHead
-                        >
-                        <TableHead class="text-right">Lines</TableHead>
+                        <SortableHead name="number" :sort="sort">{{
+                            $t('Order')
+                        }}</SortableHead>
+                        <SortableHead name="supplier" :sort="sort">{{
+                            $t('Supplier')
+                        }}</SortableHead>
+                        <SortableHead name="created_at" :sort="sort">{{
+                            $t('Created')
+                        }}</SortableHead>
+                        <SortableHead name="expected_on" :sort="sort">{{
+                            $t('Expected')
+                        }}</SortableHead>
+                        <TableHead class="text-right">{{
+                            $t('Lines')
+                        }}</TableHead>
                         <SortableHead
                             name="total_sen"
                             :sort="sort"
                             align="right"
-                            >Total</SortableHead
+                            >{{ $t('Total') }}</SortableHead
                         >
-                        <SortableHead name="status" :sort="sort"
-                            >Status</SortableHead
-                        >
+                        <SortableHead name="status" :sort="sort">{{
+                            $t('Status')
+                        }}</SortableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -95,8 +103,11 @@ const tone = {
                         <TableCell
                             colspan="7"
                             class="py-10 text-center text-muted-foreground"
-                            >No orders yet. Start one from what’s running
-                            low.</TableCell
+                            >{{
+                                $t(
+                                    'No orders yet. Start one from what’s running low.',
+                                )
+                            }}</TableCell
                         >
                     </TableRow>
                     <TableRow v-for="o in orders.data" :key="o.id">
@@ -124,7 +135,7 @@ const tone = {
                                     'rounded-full px-2 py-0.5 text-sm font-medium capitalize',
                                     tone[o.status],
                                 ]"
-                                >{{ o.status }}</span
+                                >{{ $t(o.status) }}</span
                             ></TableCell
                         >
                     </TableRow>

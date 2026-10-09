@@ -32,12 +32,12 @@ class RefundSale
             $quantities = array_filter($quantities, fn ($q) => $q > 0);
 
             if (! $quantities) {
-                throw ValidationException::withMessages(['lines' => 'Choose at least one item to refund.']);
+                throw ValidationException::withMessages(['lines' => __('Choose at least one item to refund.')]);
             }
 
             $shift = Shift::openFor($user);
             if ($sale->payment_method === 'cash' && ! $shift) {
-                throw ValidationException::withMessages(['shift' => 'Open a shift to pay out a cash refund.']);
+                throw ValidationException::withMessages(['shift' => __('Open a shift to pay out a cash refund.')]);
             }
 
             $entries = PoisonRegisterEntry::query()
@@ -47,7 +47,7 @@ class RefundSale
                 ->keyBy('sale_line_id');
 
             if ($entries->isNotEmpty() && ! $user->isPharmacist()) {
-                throw ValidationException::withMessages(['lines' => 'Only a pharmacist can refund scheduled poisons.']);
+                throw ValidationException::withMessages(['lines' => __('Only a pharmacist can refund scheduled poisons.')]);
             }
 
             $net = $sale->lineNetTotals();
@@ -66,10 +66,10 @@ class RefundSale
                 /** @var SaleLine|null $line */
                 $line = $sale->lines->firstWhere('id', $lineId);
                 if (! $line) {
-                    throw ValidationException::withMessages(['lines' => 'That item is not on this sale.']);
+                    throw ValidationException::withMessages(['lines' => __('That item is not on this sale.')]);
                 }
                 if ($qty > $line->qty - $line->refunded_qty) {
-                    throw ValidationException::withMessages(["lines.$lineId" => 'Only '.($line->qty - $line->refunded_qty)." of {$line->product->name} left to refund."]);
+                    throw ValidationException::withMessages(["lines.$lineId" => __('Only :qty of :product left to refund.', ['qty' => $line->qty - $line->refunded_qty, 'product' => $line->product->name])]);
                 }
 
                 // Cumulative rounding: refunding every unit pays back exactly the line's net total.

@@ -54,8 +54,12 @@ const submit = () =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Prescriptions"
-            description="Captured at the counter. Refills are dispensed from the POS."
+            :title="$t('Prescriptions')"
+            :description="
+                $t(
+                    'Captured at the counter. Refills are dispensed from the POS.',
+                )
+            "
             :icon="FileText"
             tone="bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300"
         >
@@ -66,7 +70,7 @@ const submit = () =>
                 <Input
                     v-model="q"
                     class="w-64 pl-8"
-                    placeholder="Patient, MyKad or prescriber"
+                    :placeholder="$t('Patient, MyKad or prescriber')"
                 />
             </form>
         </PageHeader>
@@ -75,19 +79,19 @@ const submit = () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="issued_on" :sort="sort"
-                            >Issued</SortableHead
-                        >
-                        <SortableHead name="patient" :sort="sort"
-                            >Patient</SortableHead
-                        >
-                        <SortableHead name="prescriber" :sort="sort"
-                            >Prescriber</SortableHead
-                        >
-                        <SortableHead name="diagnosis" :sort="sort"
-                            >Diagnosis</SortableHead
-                        >
-                        <TableHead>Dispensed</TableHead>
+                        <SortableHead name="issued_on" :sort="sort">{{
+                            $t('Issued')
+                        }}</SortableHead>
+                        <SortableHead name="patient" :sort="sort">{{
+                            $t('Patient')
+                        }}</SortableHead>
+                        <SortableHead name="prescriber" :sort="sort">{{
+                            $t('Prescriber')
+                        }}</SortableHead>
+                        <SortableHead name="diagnosis" :sort="sort">{{
+                            $t('Diagnosis')
+                        }}</SortableHead>
+                        <TableHead>{{ $t('Dispensed') }}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -95,7 +99,7 @@ const submit = () =>
                         <TableCell
                             colspan="5"
                             class="py-10 text-center text-muted-foreground"
-                            >No prescriptions found.</TableCell
+                            >{{ $t('No prescriptions found.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow v-for="p in prescriptions.data" :key="p.id">
@@ -129,8 +133,12 @@ const submit = () =>
                                         : 'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/20 dark:text-fuchsia-300',
                                 ]"
                             >
-                                {{ p.sales_count }} of
-                                {{ 1 + p.refills_allowed }}
+                                {{
+                                    $t(':done of :total', {
+                                        done: p.sales_count,
+                                        total: 1 + p.refills_allowed,
+                                    })
+                                }}
                             </span>
                         </TableCell>
                     </TableRow>

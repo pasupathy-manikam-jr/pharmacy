@@ -42,7 +42,7 @@ class CompleteSale
         return DB::transaction(function () use ($user, $data, $branchId) {
             $shift = Shift::openFor($user);
             if (! $shift) {
-                throw ValidationException::withMessages(['shift' => 'Open a shift before selling.']);
+                throw ValidationException::withMessages(['shift' => __('Open a shift before selling.')]);
             }
 
             $products = Product::query()->whereIn('id', array_column($data['lines'], 'product_id'))->get()->keyBy('id');
@@ -51,17 +51,17 @@ class CompleteSale
             $needsRx = $groups->contains(fn (PoisonGroup $g) => $g->requiresPrescription());
 
             if ($hasPoison && ! $user->isPharmacist()) {
-                throw ValidationException::withMessages(['lines' => 'Scheduled poisons can only be sold by a pharmacist.']);
+                throw ValidationException::withMessages(['lines' => __('Scheduled poisons can only be sold by a pharmacist.')]);
             }
 
             $customer = $this->resolveCustomer($data);
 
             if ($hasPoison && ! $customer) {
-                throw ValidationException::withMessages(['customer.name' => 'Customer name is required for scheduled poisons.']);
+                throw ValidationException::withMessages(['customer.name' => __('Customer name is required for scheduled poisons.')]);
             }
 
             if ($data['payment_method'] === 'credit' && ! $customer) {
-                throw ValidationException::withMessages(['payment_method' => 'Choose the customer whose account this goes on.']);
+                throw ValidationException::withMessages(['payment_method' => __('Choose the customer whose account this goes on.')]);
             }
 
             $prescription = $needsRx ? $this->resolvePrescription($data, $customer, $branchId) : null;
@@ -124,13 +124,13 @@ class CompleteSale
 
             $discount = (int) ($data['discount_sen'] ?? 0);
             if ($discount > $subtotal) {
-                throw ValidationException::withMessages(['discount_sen' => 'Discount exceeds subtotal.']);
+                throw ValidationException::withMessages(['discount_sen' => __('Discount exceeds subtotal.')]);
             }
             $total = $subtotal + $tax - $discount;
 
             $tendered = $data['payment_method'] === 'cash' ? (int) ($data['tendered_sen'] ?? 0) : $total;
             if ($tendered < $total) {
-                throw ValidationException::withMessages(['tendered_sen' => 'Amount tendered is less than the total.']);
+                throw ValidationException::withMessages(['tendered_sen' => __('Amount tendered is less than the total.')]);
             }
 
             $sale->update([
@@ -184,7 +184,7 @@ class CompleteSale
             $dispensed = Sale::query()->where('prescription_id', $prescription->id)->where('status', '!=', 'refunded')->count();
 
             if ($dispensed >= 1 + $prescription->refills_allowed) {
-                throw ValidationException::withMessages(['prescription_id' => "This prescription has been fully dispensed ({$dispensed} of ".(1 + $prescription->refills_allowed).').']);
+                throw ValidationException::withMessages(['prescription_id' => __('This prescription has been fully dispensed (:done of :total).', ['done' => $dispensed, 'total' => 1 + $prescription->refills_allowed])]);
             }
 
             return $prescription;
@@ -193,7 +193,7 @@ class CompleteSale
         /** @var array<string, mixed>|null $rx */
         $rx = $data['prescription'] ?? null;
         if (empty($rx['prescriber_name'])) {
-            throw ValidationException::withMessages(['prescription.prescriber_name' => 'A prescription is required for this item.']);
+            throw ValidationException::withMessages(['prescription.prescriber_name' => __('A prescription is required for this item.')]);
         }
 
         return Prescription::query()->create([

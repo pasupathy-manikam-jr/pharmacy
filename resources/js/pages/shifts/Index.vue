@@ -74,8 +74,12 @@ const varianceTone = (v: number) =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="My shift"
-            description="Open the drawer with a float, close it by counting the cash."
+            :title="$t('My shift')"
+            :description="
+                $t(
+                    'Open the drawer with a float, close it by counting the cash.',
+                )
+            "
             :icon="Wallet"
             tone="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300"
         />
@@ -85,8 +89,11 @@ const varianceTone = (v: number) =>
             class="rounded-xl border border-green-200 bg-green-50/60 p-5 dark:border-green-500/30 dark:bg-green-500/5"
         >
             <p class="mb-4 text-muted-foreground">
-                You have no open shift. Count the float in the drawer, then open
-                your shift to start selling.
+                {{
+                    $t(
+                        'You have no open shift. Count the float in the drawer, then open your shift to start selling.',
+                    )
+                }}
             </p>
             <OpenShiftForm />
         </section>
@@ -94,31 +101,41 @@ const varianceTone = (v: number) =>
         <section v-else class="grid gap-5 lg:grid-cols-2">
             <div class="rounded-xl border bg-card p-5">
                 <p class="text-sm text-muted-foreground">
-                    Open since {{ formatDateTime(current.opened_at) }}
+                    {{
+                        $t('Open since :when', {
+                            when: formatDateTime(current.opened_at),
+                        })
+                    }}
                 </p>
                 <dl class="tabular mt-4 grid grid-cols-2 gap-y-2">
-                    <dt class="text-muted-foreground">Opening float</dt>
+                    <dt class="text-muted-foreground">
+                        {{ $t('Opening float') }}
+                    </dt>
                     <dd class="text-right">{{ rm(current.summary.float) }}</dd>
-                    <dt class="text-muted-foreground">Cash sales</dt>
+                    <dt class="text-muted-foreground">
+                        {{ $t('Cash sales') }}
+                    </dt>
                     <dd
                         class="text-right text-emerald-700 dark:text-emerald-300"
                     >
                         + {{ rm(current.summary.sales) }}
                     </dd>
                     <dt class="text-muted-foreground">
-                        Account payments in cash
+                        {{ $t('Account payments in cash') }}
                     </dt>
                     <dd
                         class="text-right text-emerald-700 dark:text-emerald-300"
                     >
                         + {{ rm(current.summary.payments) }}
                     </dd>
-                    <dt class="text-muted-foreground">Cash refunds</dt>
+                    <dt class="text-muted-foreground">
+                        {{ $t('Cash refunds') }}
+                    </dt>
                     <dd class="text-right text-rose-600">
                         − {{ rm(current.summary.refunds) }}
                     </dd>
                     <dt class="border-t pt-2 font-semibold">
-                        Expected in drawer
+                        {{ $t('Expected in drawer') }}
                     </dt>
                     <dd
                         class="border-t pt-2 text-right font-display text-2xl font-bold"
@@ -132,9 +149,11 @@ const varianceTone = (v: number) =>
                 novalidate
                 @submit.prevent="close"
             >
-                <h2 class="font-semibold">Close shift</h2>
+                <h2 class="font-semibold">{{ $t('Close shift') }}</h2>
                 <div class="grid gap-1.5">
-                    <Label for="counted">Cash counted in drawer (RM)</Label>
+                    <Label for="counted">{{
+                        $t('Cash counted in drawer (RM)')
+                    }}</Label>
                     <Input
                         id="counted"
                         v-model="form.counted"
@@ -154,24 +173,26 @@ const varianceTone = (v: number) =>
                 >
                     {{
                         variance === 0
-                            ? 'Drawer balances exactly.'
+                            ? $t('Drawer balances exactly.')
                             : variance > 0
-                              ? `Over by ${rm(variance)}`
-                              : `Short by ${rm(-variance)}`
+                              ? $t('Over by :amount', { amount: rm(variance) })
+                              : $t('Short by :amount', {
+                                    amount: rm(-variance),
+                                })
                     }}
                 </p>
                 <div class="grid gap-1.5">
-                    <Label for="note">Note</Label>
+                    <Label for="note">{{ $t('Note') }}</Label>
                     <Input
                         id="note"
                         v-model="form.note"
-                        placeholder="Explain any difference"
+                        :placeholder="$t('Explain any difference')"
                     />
                 </div>
                 <Button
                     :disabled="form.processing"
                     class="self-start bg-green-600 hover:bg-green-700"
-                    >Close shift</Button
+                    >{{ $t('Close shift') }}</Button
                 >
             </form>
         </section>
@@ -180,25 +201,34 @@ const varianceTone = (v: number) =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="opened_at" :sort="sort"
-                            >Opened</SortableHead
+                        <SortableHead name="opened_at" :sort="sort">{{
+                            $t('Opened')
+                        }}</SortableHead>
+                        <SortableHead name="closed_at" :sort="sort">{{
+                            $t('Closed')
+                        }}</SortableHead>
+                        <SortableHead name="staff" :sort="sort">{{
+                            $t('Staff')
+                        }}</SortableHead>
+                        <SortableHead
+                            name="expected"
+                            :sort="sort"
+                            align="right"
+                            >{{ $t('Expected') }}</SortableHead
                         >
-                        <SortableHead name="closed_at" :sort="sort"
-                            >Closed</SortableHead
+                        <SortableHead
+                            name="counted"
+                            :sort="sort"
+                            align="right"
+                            >{{ $t('Counted') }}</SortableHead
                         >
-                        <SortableHead name="staff" :sort="sort"
-                            >Staff</SortableHead
+                        <SortableHead
+                            name="variance"
+                            :sort="sort"
+                            align="right"
+                            >{{ $t('Difference') }}</SortableHead
                         >
-                        <SortableHead name="expected" :sort="sort" align="right"
-                            >Expected</SortableHead
-                        >
-                        <SortableHead name="counted" :sort="sort" align="right"
-                            >Counted</SortableHead
-                        >
-                        <SortableHead name="variance" :sort="sort" align="right"
-                            >Difference</SortableHead
-                        >
-                        <TableHead>Note</TableHead>
+                        <TableHead>{{ $t('Note') }}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -206,7 +236,7 @@ const varianceTone = (v: number) =>
                         <TableCell
                             colspan="7"
                             class="py-10 text-center text-muted-foreground"
-                            >No closed shifts yet.</TableCell
+                            >{{ $t('No closed shifts yet.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow v-for="s in history.data" :key="s.id">

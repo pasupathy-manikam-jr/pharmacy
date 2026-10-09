@@ -14,15 +14,15 @@ const options = [
     <div
         class="flex rounded-lg border bg-card p-0.5"
         role="group"
-        aria-label="Layout"
+        :aria-label="$t('Layout')"
     >
         <button
             v-for="o in options"
             :key="o.value"
             type="button"
-            :aria-label="o.label"
+            :aria-label="$t(o.label)"
             :aria-pressed="mode === o.value"
-            :title="o.label"
+            :title="$t(o.label)"
             :class="[
                 'rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
                 mode === o.value

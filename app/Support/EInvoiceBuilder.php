@@ -24,7 +24,7 @@ class EInvoiceBuilder
     public static function supplier(Branch $branch): Party
     {
         if (! $branch->tin) {
-            throw new EInvoiceException('Add the company TIN under Branch settings before sending e-invoices.');
+            throw new EInvoiceException(__('Add the company TIN under Branch settings before sending e-invoices.'));
         }
 
         return new Party(

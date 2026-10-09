@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Pharmacy\AuditLogController;
 use App\Http\Controllers\Pharmacy\BranchController;
 use App\Http\Controllers\Pharmacy\CustomerController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Pharmacy\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
+Route::post('locale', LocaleController::class)->name('locale.update');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');

@@ -82,8 +82,10 @@ const submit = () =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Customers"
-            description="Patients and regulars. Allergies show up at the counter."
+            :title="$t('Customers')"
+            :description="
+                $t('Patients and regulars. Allergies show up at the counter.')
+            "
             :icon="Users"
             tone="bg-pink-100 text-pink-700 dark:bg-pink-500/20 dark:text-pink-300"
         >
@@ -94,7 +96,7 @@ const submit = () =>
                 <Input
                     v-model="q"
                     class="w-64 pl-8"
-                    placeholder="Name, IC or phone"
+                    :placeholder="$t('Name, IC or phone')"
                 />
             </form>
             <ViewToggle v-model="view" />
@@ -106,56 +108,56 @@ const submit = () =>
             @submit.prevent="submit"
         >
             <div class="grid gap-1.5 sm:col-span-2">
-                <Label for="c-name">Full name</Label>
+                <Label for="c-name">{{ $t('Full name') }}</Label>
                 <Input id="c-name" v-model="form.name" />
                 <InputError :message="form.errors.name" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="c-ic">MyKad / passport</Label>
+                <Label for="c-ic">{{ $t('MyKad / passport') }}</Label>
                 <Input id="c-ic" v-model="form.ic_no" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="c-phone">Phone</Label>
+                <Label for="c-phone">{{ $t('Phone') }}</Label>
                 <Input id="c-phone" v-model="form.phone" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="c-dob">Date of birth</Label>
+                <Label for="c-dob">{{ $t('Date of birth') }}</Label>
                 <DatePicker
                     id="c-dob"
                     v-model="form.dob"
-                    placeholder="Select date"
+                    :placeholder="$t('Select date')"
                 />
                 <InputError :message="form.errors.dob" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="c-sex">Sex</Label>
+                <Label for="c-sex">{{ $t('Sex') }}</Label>
                 <Select v-model="form.sex">
                     <SelectTrigger id="c-sex" class="w-full"
                         ><SelectValue placeholder="Select"
                     /></SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="F">Female</SelectItem>
-                        <SelectItem value="M">Male</SelectItem>
+                        <SelectItem value="F">{{ $t('Female') }}</SelectItem>
+                        <SelectItem value="M">{{ $t('Male') }}</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
             <div class="grid gap-1.5 sm:col-span-2">
-                <Label for="c-allergies">Drug allergies</Label>
+                <Label for="c-allergies">{{ $t('Drug allergies') }}</Label>
                 <Input
                     id="c-allergies"
                     v-model="form.allergies"
-                    placeholder="e.g. Penicillin"
+                    :placeholder="$t('e.g. Penicillin')"
                 />
             </div>
             <div class="grid gap-1.5 sm:col-span-3">
-                <Label for="c-address">Address</Label>
+                <Label for="c-address">{{ $t('Address') }}</Label>
                 <Input id="c-address" v-model="form.address" />
             </div>
             <div class="flex items-end">
                 <Button
                     :disabled="form.processing"
                     class="w-full bg-pink-600 hover:bg-pink-700"
-                    >Add customer</Button
+                    >{{ $t('Add customer') }}</Button
                 >
             </div>
         </form>
@@ -164,21 +166,21 @@ const submit = () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="name" :sort="sort"
-                            >Name</SortableHead
-                        >
-                        <SortableHead name="ic_no" :sort="sort"
-                            >MyKad</SortableHead
-                        >
-                        <SortableHead name="dob" :sort="sort"
-                            >Born</SortableHead
-                        >
-                        <SortableHead name="phone" :sort="sort"
-                            >Phone</SortableHead
-                        >
-                        <SortableHead name="allergies" :sort="sort"
-                            >Allergies</SortableHead
-                        >
+                        <SortableHead name="name" :sort="sort">{{
+                            $t('Name')
+                        }}</SortableHead>
+                        <SortableHead name="ic_no" :sort="sort">{{
+                            $t('MyKad')
+                        }}</SortableHead>
+                        <SortableHead name="dob" :sort="sort">{{
+                            $t('Born')
+                        }}</SortableHead>
+                        <SortableHead name="phone" :sort="sort">{{
+                            $t('Phone')
+                        }}</SortableHead>
+                        <SortableHead name="allergies" :sort="sort">{{
+                            $t('Allergies')
+                        }}</SortableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -186,7 +188,7 @@ const submit = () =>
                         <TableCell
                             colspan="5"
                             class="py-10 text-center text-muted-foreground"
-                            >No customers found.</TableCell
+                            >{{ $t('No customers found.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow v-for="c in customers.data" :key="c.id">
@@ -221,7 +223,7 @@ const submit = () =>
                 v-if="!customers.data.length"
                 class="col-span-full rounded-xl border border-dashed p-10 text-center text-muted-foreground"
             >
-                No customers found.
+                {{ $t('No customers found.') }}
             </p>
             <Link
                 v-for="c in customers.data"
@@ -239,13 +241,15 @@ const submit = () =>
                 <div class="min-w-0 flex-1">
                     <h2 class="truncate font-semibold">{{ c.name }}</h2>
                     <p class="text-sm text-muted-foreground">
-                        {{ c.ic_no ?? 'No MyKad' }}
+                        {{ c.ic_no ?? $t('No MyKad') }}
                     </p>
                     <p class="text-sm text-muted-foreground">{{ c.phone }}</p>
                     <span
                         v-if="c.allergies"
                         class="mt-2 inline-block rounded-md bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-700 dark:bg-rose-500/20 dark:text-rose-300"
-                        >Allergic: {{ c.allergies }}</span
+                        >{{
+                            $t('Allergic: :list', { list: c.allergies ?? '' })
+                        }}</span
                     >
                 </div>
             </Link>

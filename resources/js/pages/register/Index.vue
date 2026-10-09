@@ -57,17 +57,21 @@ watch(f, () =>
 </script>
 
 <template>
-    <Head :title="labels[filters.register]" />
+    <Head :title="$t(labels[filters.register])" />
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            :title="labels[filters.register]"
-            description="Written automatically at the counter. Entries are never edited; refunds add a reversing line."
+            :title="$t(labels[filters.register])"
+            :description="
+                $t(
+                    'Written automatically at the counter. Entries are never edited; refunds add a reversing line.',
+                )
+            "
             :icon="BookLock"
             tone="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300"
         >
             <Button variant="outline" class="no-print" @click="print"
-                ><Printer /> Print</Button
+                ><Printer /> {{ $t('Print') }}</Button
             >
         </PageHeader>
 
@@ -85,11 +89,11 @@ watch(f, () =>
                     ]"
                     @click="f.register = r"
                 >
-                    {{ labels[r] }}
+                    {{ $t(labels[r]) }}
                 </button>
             </div>
             <div class="w-44"><DatePicker v-model="f.from" /></div>
-            <span class="pb-2 text-muted-foreground">to</span>
+            <span class="pb-2 text-muted-foreground">{{ $t('to') }}</span>
             <div class="w-44"><DatePicker v-model="f.to" /></div>
         </div>
 
@@ -97,15 +101,19 @@ watch(f, () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>No.</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Product · batch</TableHead>
-                        <TableHead class="text-right">Qty</TableHead>
-                        <TableHead class="text-right">Balance</TableHead>
-                        <TableHead>Prescriber</TableHead>
-                        <TableHead>Directions</TableHead>
-                        <TableHead>Pharmacist</TableHead>
+                        <TableHead>{{ $t('No.') }}</TableHead>
+                        <TableHead>{{ $t('Date') }}</TableHead>
+                        <TableHead>{{ $t('Customer') }}</TableHead>
+                        <TableHead>{{ $t('Product · batch') }}</TableHead>
+                        <TableHead class="text-right">{{
+                            $t('Qty')
+                        }}</TableHead>
+                        <TableHead class="text-right">{{
+                            $t('Balance')
+                        }}</TableHead>
+                        <TableHead>{{ $t('Prescriber') }}</TableHead>
+                        <TableHead>{{ $t('Directions') }}</TableHead>
+                        <TableHead>{{ $t('Pharmacist') }}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -113,7 +121,7 @@ watch(f, () =>
                         <TableCell
                             colspan="9"
                             class="py-10 text-center text-muted-foreground"
-                            >No entries in this period.</TableCell
+                            >{{ $t('No entries in this period.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow
@@ -151,7 +159,11 @@ watch(f, () =>
                         >
                             {{ e.qty }}
                             <p v-if="e.reverses_id" class="text-xs font-normal">
-                                reverses #{{ e.reverses_id }}
+                                {{
+                                    $t('reverses #:id', {
+                                        id: e.reverses_id ?? '',
+                                    })
+                                }}
                             </p>
                         </TableCell>
                         <TableCell class="text-right">{{

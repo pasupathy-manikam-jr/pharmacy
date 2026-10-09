@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
 import { Button } from '@/components/ui/button';
 import { dashboard, login } from '@/routes';
 
@@ -47,12 +48,15 @@ const promises = [
                     page.props.name
                 }}</span>
             </div>
-            <Button v-if="page.props.auth.user" as-child>
-                <Link :href="dashboard()">Open dashboard</Link>
-            </Button>
-            <Button v-else as-child>
-                <Link :href="login()">Log in</Link>
-            </Button>
+            <div class="flex items-center gap-2">
+                <LanguageSwitcher />
+                <Button v-if="page.props.auth.user" as-child>
+                    <Link :href="dashboard()">{{ $t('Open dashboard') }}</Link>
+                </Button>
+                <Button v-else as-child>
+                    <Link :href="login()">{{ $t('Log in') }}</Link>
+                </Button>
+            </div>
         </header>
 
         <main class="mx-auto max-w-6xl px-4 pt-10 pb-20">
@@ -63,12 +67,14 @@ const promises = [
                     <h1
                         class="text-4xl leading-[1.05] font-bold tracking-tight text-balance sm:text-6xl"
                     >
-                        The dispensary, kept straight.
+                        {{ $t('The dispensary, kept straight.') }}
                     </h1>
                     <p class="mt-6 text-lg text-muted-foreground">
-                        Counter sales, batch-level stock and the statutory
-                        poison registers for a Malaysian community pharmacy, in
-                        one system your staff can learn in an afternoon.
+                        {{
+                            $t(
+                                'Counter sales, batch-level stock and the statutory poison registers for a Malaysian community pharmacy, in one system your staff can learn in an afternoon.',
+                            )
+                        }}
                     </p>
                     <div class="mt-8 flex gap-3">
                         <Button size="lg" as-child>
@@ -78,8 +84,8 @@ const promises = [
                                 "
                                 >{{
                                     page.props.auth.user
-                                        ? 'Open dashboard'
-                                        : 'Log in to your pharmacy'
+                                        ? $t('Open dashboard')
+                                        : $t('Log in to your pharmacy')
                                 }}</Link
                             >
                         </Button>
@@ -93,40 +99,51 @@ const promises = [
                     <div
                         class="-mx-5 -mt-5 mb-4 flex items-center justify-between rounded-t-lg bg-teal-700 px-5 py-2.5 text-white"
                     >
-                        <span class="font-display font-semibold"
-                            >Farmasi Seri Mutiara</span
-                        >
-                        <span class="text-xs text-teal-100">Lic. A/12345</span>
+                        <span class="font-display font-semibold">{{
+                            $t('Farmasi Seri Mutiara')
+                        }}</span>
+                        <span class="text-xs text-teal-100">{{
+                            $t('Lic. A/12345')
+                        }}</span>
                     </div>
                     <div class="flex justify-between text-neutral-500">
-                        <span>Rx 004218</span>
-                        <span>09 Oct 2026</span>
+                        <span>{{ $t('Rx 004218') }}</span>
+                        <span>{{ $t('09 Oct 2026') }}</span>
                     </div>
-                    <p class="mt-2 font-semibold">Nur Aisyah binti Ahmad</p>
+                    <p class="mt-2 font-semibold">
+                        {{ $t('Nur Aisyah binti Ahmad') }}
+                    </p>
                     <p
                         class="mt-3 font-display text-xl font-bold text-teal-800"
                     >
-                        Amoxicillin 500 mg
+                        {{ $t('Amoxicillin 500 mg') }}
                     </p>
-                    <p class="text-neutral-600">21 capsules</p>
+                    <p class="text-neutral-600">{{ $t('21 capsules') }}</p>
                     <p
                         class="mt-3 rounded-md bg-violet-50 px-3 py-2 font-medium text-violet-900"
                     >
-                        Take 1 capsule three times a day after food. Finish the
-                        whole course.
+                        {{
+                            $t(
+                                'Take 1 capsule three times a day after food. Finish the whole course.',
+                            )
+                        }}
                     </p>
                     <div class="mt-3 flex flex-wrap gap-1.5 text-xs">
                         <span
                             class="rounded-full bg-rose-100 px-2 py-0.5 font-medium text-rose-700"
-                            >Group B · Prescription Book #318</span
+                            >{{ $t('Group B · Prescription Book #318') }}</span
                         >
                         <span
                             class="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-800"
-                            >Batch AMX2207 · exp Mar 2027</span
+                            >{{ $t('Batch AMX2207 · exp Mar 2027') }}</span
                         >
                     </div>
                     <p class="mt-3 border-t pt-2 text-xs text-neutral-500">
-                        Dispensed by Ph. Lim Wei Ling · Dr. Tan (MMC 45821)
+                        {{
+                            $t(
+                                'Dispensed by Ph. Lim Wei Ling · Dr. Tan (MMC 45821)',
+                            )
+                        }}
                     </p>
                 </figure>
             </section>
@@ -137,9 +154,9 @@ const promises = [
                     :key="p.title"
                     :class="['border-l-4 pl-5', p.tone]"
                 >
-                    <h2 class="text-lg font-semibold">{{ p.title }}</h2>
+                    <h2 class="text-lg font-semibold">{{ $t(p.title) }}</h2>
                     <p class="mt-1 max-w-prose text-muted-foreground">
-                        {{ p.text }}
+                        {{ $t(p.text) }}
                     </p>
                 </div>
             </section>

@@ -44,12 +44,12 @@ class ShiftController extends Controller
         $data = $request->validate(['opening_float_sen' => ['required', 'integer', 'min:0']]);
 
         if (Shift::openFor($user)) {
-            throw ValidationException::withMessages(['opening_float_sen' => 'You already have an open shift.']);
+            throw ValidationException::withMessages(['opening_float_sen' => __('You already have an open shift.')]);
         }
 
         Shift::query()->create(['branch_id' => $user->branch_id, 'user_id' => $user->id, 'opening_float_sen' => $data['opening_float_sen'], 'opened_at' => now()]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Shift opened.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Shift opened.')]);
 
         return back();
     }
@@ -65,7 +65,7 @@ class ShiftController extends Controller
 
         $shift = Shift::openFor($user);
         if (! $shift) {
-            throw ValidationException::withMessages(['counted_cash_sen' => 'You have no open shift.']);
+            throw ValidationException::withMessages(['counted_cash_sen' => __('You have no open shift.')]);
         }
 
         $expected = $shift->cashSummary()['expected'];
@@ -73,7 +73,7 @@ class ShiftController extends Controller
 
         AuditLog::record('shift.closed', $shift, ['expected_sen' => $expected, 'counted_sen' => $data['counted_cash_sen'], 'variance_sen' => $data['counted_cash_sen'] - $expected]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Shift closed.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Shift closed.')]);
 
         return to_route('shifts.index');
     }

@@ -24,7 +24,7 @@ class TransferStock
     public function handle(User $user, Branch $to, array $lines, ?string $note = null): void
     {
         if ($to->id === $user->branch_id) {
-            throw ValidationException::withMessages(['to_branch_id' => 'Choose a different branch.']);
+            throw ValidationException::withMessages(['to_branch_id' => __('Choose a different branch.')]);
         }
 
         DB::transaction(function () use ($user, $to, $lines, $note) {

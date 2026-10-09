@@ -89,15 +89,19 @@ const describe = (data: Record<string, unknown> | null) =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Audit log"
-            description="Who changed what. Entries can’t be edited or removed."
+            :title="$t('Audit log')"
+            :description="
+                $t('Who changed what. Entries can’t be edited or removed.')
+            "
             :icon="History"
             tone="bg-slate-200 text-slate-700 dark:bg-slate-500/20 dark:text-slate-300"
         >
             <Select v-model="a">
                 <SelectTrigger class="w-56"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">All activity</SelectItem>
+                    <SelectItem value="all">{{
+                        $t('All activity')
+                    }}</SelectItem>
                     <SelectItem v-for="x in actions" :key="x" :value="x">{{
                         x
                     }}</SelectItem>
@@ -109,17 +113,17 @@ const describe = (data: Record<string, unknown> | null) =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="created_at" :sort="sort"
-                            >When</SortableHead
-                        >
-                        <SortableHead name="user" :sort="sort"
-                            >Who</SortableHead
-                        >
-                        <SortableHead name="action" :sort="sort"
-                            >What</SortableHead
-                        >
-                        <TableHead>Details</TableHead>
-                        <TableHead>IP</TableHead>
+                        <SortableHead name="created_at" :sort="sort">{{
+                            $t('When')
+                        }}</SortableHead>
+                        <SortableHead name="user" :sort="sort">{{
+                            $t('Who')
+                        }}</SortableHead>
+                        <SortableHead name="action" :sort="sort">{{
+                            $t('What')
+                        }}</SortableHead>
+                        <TableHead>{{ $t('Details') }}</TableHead>
+                        <TableHead>{{ $t('IP') }}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -127,14 +131,16 @@ const describe = (data: Record<string, unknown> | null) =>
                         <TableCell
                             colspan="5"
                             class="py-10 text-center text-muted-foreground"
-                            >No activity recorded yet.</TableCell
+                            >{{ $t('No activity recorded yet.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow v-for="l in logs.data" :key="l.id">
                         <TableCell class="whitespace-nowrap">{{
                             formatDateTime(l.created_at)
                         }}</TableCell>
-                        <TableCell>{{ l.user?.name ?? 'System' }}</TableCell>
+                        <TableCell>{{
+                            l.user?.name ?? $t('System')
+                        }}</TableCell>
                         <TableCell
                             ><span
                                 :class="[

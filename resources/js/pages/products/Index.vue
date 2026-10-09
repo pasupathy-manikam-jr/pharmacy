@@ -62,8 +62,10 @@ const submit = () =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Products"
-            description="Your catalogue, prices and poison classification."
+            :title="$t('Products')"
+            :description="
+                $t('Your catalogue, prices and poison classification.')
+            "
             :icon="Pill"
             tone="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300"
         >
@@ -74,15 +76,17 @@ const submit = () =>
                 <Input
                     v-model="q"
                     class="w-64 pl-8"
-                    placeholder="Name, generic or barcode"
+                    :placeholder="$t('Name, generic or barcode')"
                 />
             </form>
             <ViewToggle v-model="view" />
             <Button variant="outline" as-child
-                ><Link :href="importPage()"><FileUp /> Import CSV</Link></Button
+                ><Link :href="importPage()"
+                    ><FileUp /> {{ $t('Import CSV') }}</Link
+                ></Button
             >
             <Button as-child class="bg-indigo-600 hover:bg-indigo-700">
-                <Link :href="create()"><Plus /> Add product</Link>
+                <Link :href="create()"><Plus /> {{ $t('Add product') }}</Link>
             </Button>
         </PageHeader>
 
@@ -90,29 +94,29 @@ const submit = () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="name" :sort="sort"
-                            >Product</SortableHead
-                        >
-                        <SortableHead name="generic_name" :sort="sort"
-                            >Generic</SortableHead
-                        >
-                        <SortableHead name="poison_group" :sort="sort"
-                            >Class</SortableHead
-                        >
-                        <SortableHead name="barcode" :sort="sort"
-                            >Barcode</SortableHead
-                        >
+                        <SortableHead name="name" :sort="sort">{{
+                            $t('Product')
+                        }}</SortableHead>
+                        <SortableHead name="generic_name" :sort="sort">{{
+                            $t('Generic')
+                        }}</SortableHead>
+                        <SortableHead name="poison_group" :sort="sort">{{
+                            $t('Class')
+                        }}</SortableHead>
+                        <SortableHead name="barcode" :sort="sort">{{
+                            $t('Barcode')
+                        }}</SortableHead>
                         <SortableHead
                             name="price_sen"
                             :sort="sort"
                             align="right"
-                            >Price</SortableHead
+                            >{{ $t('Price') }}</SortableHead
                         >
                         <SortableHead
                             name="reorder_level"
                             :sort="sort"
                             align="right"
-                            >Reorder at</SortableHead
+                            >{{ $t('Reorder at') }}</SortableHead
                         >
                         <TableHead class="col-action" />
                     </TableRow>
@@ -123,8 +127,11 @@ const submit = () =>
                             colspan="7"
                             class="py-10 text-center text-muted-foreground"
                         >
-                            No products yet. Add your first product to start
-                            selling.
+                            {{
+                                $t(
+                                    'No products yet. Add your first product to start selling.',
+                                )
+                            }}
                         </TableCell>
                     </TableRow>
                     <TableRow
@@ -166,7 +173,9 @@ const submit = () =>
                             <Button variant="ghost" size="icon" as-child>
                                 <Link
                                     :href="edit(p.id)"
-                                    :aria-label="`Edit ${p.name}`"
+                                    :aria-label="
+                                        $t('Edit :name', { name: p.name })
+                                    "
                                     ><Pencil
                                 /></Link>
                             </Button>
@@ -183,7 +192,11 @@ const submit = () =>
                 v-if="!products.data.length"
                 class="col-span-full rounded-xl border border-dashed p-10 text-center text-muted-foreground"
             >
-                No products yet. Add your first product to start selling.
+                {{
+                    $t(
+                        'No products yet. Add your first product to start selling.',
+                    )
+                }}
             </p>
             <Link
                 v-for="p in products.data"

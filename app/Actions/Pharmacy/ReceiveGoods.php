@@ -41,7 +41,7 @@ class ReceiveGoods
 
                 if ($batch->expiry_date->toDateString() !== $line['expiry_date']) {
                     throw ValidationException::withMessages([
-                        "lines.$i.expiry_date" => "Batch {$line['batch_no']} already exists with expiry {$batch->expiry_date->toDateString()}.",
+                        "lines.$i.expiry_date" => __('Batch :batch already exists with expiry :date.', ['batch' => $line['batch_no'], 'date' => $batch->expiry_date->toDateString()]),
                     ]);
                 }
 

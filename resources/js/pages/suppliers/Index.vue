@@ -45,8 +45,8 @@ const submit = () =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Suppliers"
-            description="Wholesalers you receive stock from."
+            :title="$t('Suppliers')"
+            :description="$t('Wholesalers you receive stock from.')"
             :icon="Truck"
             tone="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300"
         >
@@ -59,20 +59,20 @@ const submit = () =>
             @submit.prevent="submit"
         >
             <div class="grid gap-1.5 sm:col-span-2">
-                <Label for="name">Name</Label>
+                <Label for="name">{{ $t('Name') }}</Label>
                 <Input id="name" v-model="form.name" />
                 <InputError :message="form.errors.name" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="tin">TIN</Label>
+                <Label for="tin">{{ $t('TIN') }}</Label>
                 <Input id="tin" v-model="form.tin" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="phone">Phone</Label>
+                <Label for="phone">{{ $t('Phone') }}</Label>
                 <Input id="phone" v-model="form.phone" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="email">Email</Label>
+                <Label for="email">{{ $t('Email') }}</Label>
                 <Input id="email" v-model="form.email" />
                 <InputError :message="form.errors.email" />
             </div>
@@ -80,7 +80,7 @@ const submit = () =>
                 <Button
                     :disabled="form.processing"
                     class="w-full bg-orange-600 hover:bg-orange-700"
-                    >Add supplier</Button
+                    >{{ $t('Add supplier') }}</Button
                 >
             </div>
         </form>
@@ -89,16 +89,18 @@ const submit = () =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="name" :sort="sort"
-                            >Name</SortableHead
-                        >
-                        <SortableHead name="tin" :sort="sort">TIN</SortableHead>
-                        <SortableHead name="phone" :sort="sort"
-                            >Phone</SortableHead
-                        >
-                        <SortableHead name="email" :sort="sort"
-                            >Email</SortableHead
-                        >
+                        <SortableHead name="name" :sort="sort">{{
+                            $t('Name')
+                        }}</SortableHead>
+                        <SortableHead name="tin" :sort="sort">{{
+                            $t('TIN')
+                        }}</SortableHead>
+                        <SortableHead name="phone" :sort="sort">{{
+                            $t('Phone')
+                        }}</SortableHead>
+                        <SortableHead name="email" :sort="sort">{{
+                            $t('Email')
+                        }}</SortableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -107,7 +109,11 @@ const submit = () =>
                             colspan="4"
                             class="py-10 text-center text-muted-foreground"
                         >
-                            Add a supplier above before receiving stock.
+                            {{
+                                $t(
+                                    'Add a supplier above before receiving stock.',
+                                )
+                            }}
                         </TableCell>
                     </TableRow>
                     <TableRow v-for="s in suppliers" :key="s.id">
@@ -127,7 +133,7 @@ const submit = () =>
                 v-if="!suppliers.length"
                 class="col-span-full rounded-xl border border-dashed p-10 text-center text-muted-foreground"
             >
-                Add a supplier above before receiving stock.
+                {{ $t('Add a supplier above before receiving stock.') }}
             </p>
             <section
                 v-for="s in suppliers"
@@ -136,7 +142,7 @@ const submit = () =>
             >
                 <h2 class="font-semibold">{{ s.name }}</h2>
                 <p v-if="s.tin" class="text-sm text-muted-foreground">
-                    TIN {{ s.tin }}
+                    {{ $t('TIN :tin', { tin: s.tin ?? '' }) }}
                 </p>
                 <p class="mt-2 text-sm">{{ s.phone }}</p>
                 <a

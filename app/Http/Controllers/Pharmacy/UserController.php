@@ -43,7 +43,7 @@ class UserController extends Controller
         $user->assignRole($data['role']);
         AuditLog::record('user.created', $user, ['role' => $data['role']]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => "{$user->name} added."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __(':name added.', ['name' => $user->name])]);
 
         return back();
     }
@@ -58,7 +58,7 @@ class UserController extends Controller
         ]);
 
         if ($user->is($request->user()) && $data['role'] !== 'owner') {
-            throw ValidationException::withMessages(['role' => 'You can’t remove your own owner role.']);
+            throw ValidationException::withMessages(['role' => __('You can’t remove your own owner role.')]);
         }
 
         $user->syncRoles([$data['role']]);
@@ -68,7 +68,7 @@ class UserController extends Controller
             $user->update(['password' => $data['password']]);
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => "{$user->name} updated."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __(':name updated.', ['name' => $user->name])]);
 
         return back();
     }

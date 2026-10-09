@@ -27,7 +27,7 @@ class BranchController extends Controller
         $branch = Branch::query()->create($this->validated($request));
         AuditLog::record('branch.created', $branch);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => "{$branch->name} added."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __(':name added.', ['name' => $branch->name])]);
 
         return back();
     }
@@ -37,7 +37,7 @@ class BranchController extends Controller
         $branch->update($this->validated($request));
         AuditLog::record('branch.updated', $branch, $branch->getChanges());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Branch saved.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Branch saved.')]);
 
         return back();
     }
@@ -50,7 +50,7 @@ class BranchController extends Controller
         $user->update(['branch_id' => $branch->id]);
         AuditLog::record('branch.switched', $branch);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => "Now working in {$branch->name}."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Now working in :name.', ['name' => $branch->name])]);
 
         return to_route('dashboard');
     }

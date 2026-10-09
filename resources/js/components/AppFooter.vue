@@ -13,12 +13,13 @@ const role = computed(() => page.props.auth.roles[0]);
     >
         <span v-if="branch">
             <span class="font-medium text-foreground">{{ branch.name }}</span>
-            <template v-if="branch.licence_no"
-                >, licence {{ branch.licence_no }}</template
-            >
+            <template v-if="branch.licence_no">{{
+                $t(', licence :no', { no: branch.licence_no })
+            }}</template>
         </span>
         <span>
-            Signed in as <span class="capitalize">{{ role }}</span
+            {{ $t('Signed in as') }}
+            <span class="capitalize">{{ $t(role) }}</span
             >. {{ page.props.name }} © {{ new Date().getFullYear() }}
         </span>
     </footer>

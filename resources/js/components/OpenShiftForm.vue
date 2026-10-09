@@ -21,7 +21,7 @@ const open = () =>
         @submit.prevent="open"
     >
         <div class="grid gap-1.5">
-            <Label for="float">Cash in drawer to start (RM)</Label>
+            <Label for="float">{{ $t('Cash in drawer to start (RM)') }}</Label>
             <Input
                 id="float"
                 v-model="form.float"
@@ -34,7 +34,7 @@ const open = () =>
         <Button
             :disabled="form.processing"
             class="bg-green-600 hover:bg-green-700"
-            >Open shift</Button
+            >{{ $t('Open shift') }}</Button
         >
         <InputError
             class="w-full"

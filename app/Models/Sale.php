@@ -103,7 +103,7 @@ class Sale extends Model implements EInvoiceable
         $this->loadMissing(['lines.product', 'branch', 'customer']);
 
         if (! $this->customer?->tin) {
-            throw new EInvoiceException('This customer has no TIN. Add it on the customer, or leave the sale for the monthly consolidated e-invoice.');
+            throw new EInvoiceException(__('This customer has no TIN. Add it on the customer, or leave the sale for the monthly consolidated e-invoice.'));
         }
 
         $lines = $this->lines->values();

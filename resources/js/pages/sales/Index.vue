@@ -66,8 +66,12 @@ const methodLabel: Record<string, string> = {
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Sales"
-            description="Every receipt from this branch. Open one to reprint or refund."
+            :title="$t('Sales')"
+            :description="
+                $t(
+                    'Every receipt from this branch. Open one to reprint or refund.',
+                )
+            "
             :icon="ReceiptText"
             tone="bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300"
         >
@@ -78,7 +82,7 @@ const methodLabel: Record<string, string> = {
                 <Input
                     v-model="q"
                     class="w-56 pl-8"
-                    placeholder="Receipt number"
+                    :placeholder="$t('Receipt number')"
                 />
             </form>
         </PageHeader>
@@ -87,26 +91,26 @@ const methodLabel: Record<string, string> = {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="number" :sort="sort"
-                            >Receipt</SortableHead
-                        >
-                        <SortableHead name="created_at" :sort="sort"
-                            >When</SortableHead
-                        >
-                        <SortableHead name="customer" :sort="sort"
-                            >Customer</SortableHead
-                        >
-                        <SortableHead name="cashier" :sort="sort"
-                            >Cashier</SortableHead
-                        >
-                        <SortableHead name="payment_method" :sort="sort"
-                            >Paid by</SortableHead
-                        >
+                        <SortableHead name="number" :sort="sort">{{
+                            $t('Receipt')
+                        }}</SortableHead>
+                        <SortableHead name="created_at" :sort="sort">{{
+                            $t('When')
+                        }}</SortableHead>
+                        <SortableHead name="customer" :sort="sort">{{
+                            $t('Customer')
+                        }}</SortableHead>
+                        <SortableHead name="cashier" :sort="sort">{{
+                            $t('Cashier')
+                        }}</SortableHead>
+                        <SortableHead name="payment_method" :sort="sort">{{
+                            $t('Paid by')
+                        }}</SortableHead>
                         <SortableHead
                             name="total_sen"
                             :sort="sort"
                             align="right"
-                            >Total</SortableHead
+                            >{{ $t('Total') }}</SortableHead
                         >
                     </TableRow>
                 </TableHeader>
@@ -115,7 +119,7 @@ const methodLabel: Record<string, string> = {
                         <TableCell
                             colspan="6"
                             class="py-10 text-center text-muted-foreground"
-                            >No sales yet today.</TableCell
+                            >{{ $t('No sales yet today.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow
@@ -137,7 +141,7 @@ const methodLabel: Record<string, string> = {
                             formatDateTime(s.created_at)
                         }}</TableCell>
                         <TableCell>{{
-                            s.customer?.name ?? 'Walk-in'
+                            s.customer?.name ?? $t('Walk-in')
                         }}</TableCell>
                         <TableCell>{{ s.user.name }}</TableCell>
                         <TableCell
@@ -145,7 +149,7 @@ const methodLabel: Record<string, string> = {
                                 'font-medium',
                                 methodTone[s.payment_method],
                             ]"
-                            >{{ methodLabel[s.payment_method] }}</TableCell
+                            >{{ $t(methodLabel[s.payment_method]) }}</TableCell
                         >
                         <TableCell class="text-right font-semibold">{{
                             rm(s.total_sen)

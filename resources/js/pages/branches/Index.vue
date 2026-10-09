@@ -95,13 +95,17 @@ function save() {
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Branches"
-            description="Each outlet’s licence, address and the company details printed on receipts and e-invoices."
+            :title="$t('Branches')"
+            :description="
+                $t(
+                    'Each outlet’s licence, address and the company details printed on receipts and e-invoices.',
+                )
+            "
             :icon="Building2"
             tone="bg-teal-100 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300"
         >
             <Button class="bg-teal-600 hover:bg-teal-700" @click="open('new')"
-                ><Plus /> Add branch</Button
+                ><Plus /> {{ $t('Add branch') }}</Button
             >
         </PageHeader>
 
@@ -121,11 +125,15 @@ function save() {
                         <h2 class="text-lg font-semibold">{{ b.name }}</h2>
                         <p class="text-sm text-muted-foreground">
                             {{ b.company_name }}
-                            {{ b.licence_no ? `Licence ${b.licence_no}` : '' }}
+                            {{
+                                b.licence_no
+                                    ? $t('Licence :no', { no: b.licence_no })
+                                    : ''
+                            }}
                         </p>
                     </div>
                     <Button variant="ghost" size="sm" @click="open(b)"
-                        ><Pencil /> Edit</Button
+                        ><Pencil /> {{ $t('Edit') }}</Button
                     >
                 </div>
                 <p class="mt-3 text-sm">
@@ -144,17 +152,20 @@ function save() {
                         ]"
                         >{{
                             b.tin
-                                ? `TIN ${b.tin}`
-                                : 'No TIN: e-invoices disabled'
+                                ? $t('TIN :tin', { tin: b.tin })
+                                : $t('No TIN: e-invoices disabled')
                         }}</span
                     >
-                    <span class="rounded-full bg-muted px-2 py-0.5 font-medium"
-                        >{{ b.users_count }} staff</span
+                    <span
+                        class="rounded-full bg-muted px-2 py-0.5 font-medium"
+                        >{{
+                            $t(':count staff', { count: b.users_count })
+                        }}</span
                     >
                     <span
                         v-if="b.id === current"
                         class="rounded-full bg-teal-600 px-2 py-0.5 font-medium text-white"
-                        >You’re here</span
+                        >{{ $t('You’re here') }}</span
                     >
                 </div>
             </section>
@@ -168,13 +179,14 @@ function save() {
                 <DialogHeader>
                     <DialogTitle>{{
                         editing === 'new'
-                            ? 'Add branch'
-                            : `Edit ${editing?.name}`
+                            ? $t('Add branch')
+                            : $t('Edit :name', { name: editing?.name ?? '' })
                     }}</DialogTitle>
-                    <DialogDescription
-                        >The TIN, BRN and address are what LHDN sees as the
-                        supplier on e-invoices.</DialogDescription
-                    >
+                    <DialogDescription>{{
+                        $t(
+                            'The TIN, BRN and address are what LHDN sees as the supplier on e-invoices.',
+                        )
+                    }}</DialogDescription>
                 </DialogHeader>
                 <form
                     class="grid gap-3 sm:grid-cols-2"
@@ -182,39 +194,43 @@ function save() {
                     @submit.prevent="save"
                 >
                     <div class="grid gap-1.5">
-                        <Label for="b-name">Branch name</Label
+                        <Label for="b-name">{{ $t('Branch name') }}</Label
                         ><Input id="b-name" v-model="form.name" /><InputError
                             :message="form.errors.name"
                         />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-company">Registered company name</Label
+                        <Label for="b-company">{{
+                            $t('Registered company name')
+                        }}</Label
                         ><Input id="b-company" v-model="form.company_name" />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-licence">Pharmacy licence no.</Label
+                        <Label for="b-licence">{{
+                            $t('Pharmacy licence no.')
+                        }}</Label
                         ><Input id="b-licence" v-model="form.licence_no" />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-phone">Phone</Label
+                        <Label for="b-phone">{{ $t('Phone') }}</Label
                         ><Input id="b-phone" v-model="form.phone" />
                     </div>
                     <div class="grid gap-1.5 sm:col-span-2">
-                        <Label for="b-address">Address</Label
+                        <Label for="b-address">{{ $t('Address') }}</Label
                         ><Input id="b-address" v-model="form.address" />
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div class="grid gap-1.5">
-                            <Label for="b-postcode">Postcode</Label
+                            <Label for="b-postcode">{{ $t('Postcode') }}</Label
                             ><Input id="b-postcode" v-model="form.postcode" />
                         </div>
                         <div class="grid gap-1.5">
-                            <Label for="b-city">City</Label
+                            <Label for="b-city">{{ $t('City') }}</Label
                             ><Input id="b-city" v-model="form.city" />
                         </div>
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-state">State</Label>
+                        <Label for="b-state">{{ $t('State') }}</Label>
                         <Select v-model="form.state">
                             <SelectTrigger id="b-state" class="w-full"
                                 ><SelectValue placeholder="Choose state"
@@ -230,13 +246,13 @@ function save() {
                         </Select>
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-email">Email</Label
+                        <Label for="b-email">{{ $t('Email') }}</Label
                         ><Input id="b-email" v-model="form.email" /><InputError
                             :message="form.errors.email"
                         />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-tin">TIN</Label
+                        <Label for="b-tin">{{ $t('TIN') }}</Label
                         ><Input
                             id="b-tin"
                             v-model="form.tin"
@@ -244,15 +260,15 @@ function save() {
                         />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-brn">Business reg. no.</Label
+                        <Label for="b-brn">{{ $t('Business reg. no.') }}</Label
                         ><Input id="b-brn" v-model="form.brn" />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-sst">SST no.</Label
+                        <Label for="b-sst">{{ $t('SST no.') }}</Label
                         ><Input id="b-sst" v-model="form.sst_no" />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="b-msic">MSIC code</Label
+                        <Label for="b-msic">{{ $t('MSIC code') }}</Label
                         ><Input
                             id="b-msic"
                             v-model="form.msic_code"
@@ -263,13 +279,15 @@ function save() {
                             type="button"
                             variant="outline"
                             @click="editing = null"
-                            >Cancel</Button
+                            >{{ $t('Cancel') }}</Button
                         >
                         <Button
                             :disabled="form.processing"
                             class="bg-teal-600 hover:bg-teal-700"
                             >{{
-                                editing === 'new' ? 'Add branch' : 'Save branch'
+                                editing === 'new'
+                                    ? $t('Add branch')
+                                    : $t('Save branch')
                             }}</Button
                         >
                     </div>

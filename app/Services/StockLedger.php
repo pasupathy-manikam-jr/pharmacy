@@ -30,7 +30,7 @@ class StockLedger
 
         if ($after < 0) {
             throw ValidationException::withMessages([
-                'stock' => "Insufficient stock for batch {$batch->batch_no} ({$level->qty} left).",
+                'stock' => __('Insufficient stock for batch :batch (:qty left).', ['batch' => $batch->batch_no, 'qty' => $level->qty]),
             ]);
         }
 
@@ -84,7 +84,7 @@ class StockLedger
 
         if ($remaining > 0) {
             throw ValidationException::withMessages([
-                'stock' => "Not enough unexpired stock of {$product->name}: ".($qty - $remaining)." available, {$qty} requested.",
+                'stock' => __('Not enough unexpired stock of :product: :available available, :requested requested.', ['product' => $product->name, 'available' => $qty - $remaining, 'requested' => $qty]),
             ]);
         }
 

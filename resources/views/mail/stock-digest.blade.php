@@ -1,11 +1,11 @@
 <x-mail::message>
-# {{ $branch->name }}: stock to act on
+# {{ __(':branch: stock to act on', ['branch' => $branch->name]) }}
 
 @if ($expiring)
-## Expiring within 60 days
+## {{ __('Expiring within 60 days') }}
 
 <x-mail::table>
-| Product | Batch | Expiry | Qty |
+| {{ __('Product') }} | {{ __('Batch') }} | {{ __('Expiry') }} | {{ __('Qty') }} |
 |:--|:--|:--|--:|
 @foreach ($expiring as $e)
 | {{ $e['product'] }} | {{ $e['batch_no'] }} | {{ \Illuminate\Support\Carbon::parse($e['expiry_date'])->format('d M Y') }} | {{ $e['qty'] }} |
@@ -14,10 +14,10 @@
 @endif
 
 @if ($low)
-## At or below reorder level
+## {{ __('At or below reorder level') }}
 
 <x-mail::table>
-| Product | On hand | Reorder at |
+| {{ __('Product') }} | {{ __('On hand') }} | {{ __('Reorder at') }} |
 |:--|--:|--:|
 @foreach ($low as $p)
 | {{ $p['name'] }} | {{ $p['on_hand'] }} | {{ $p['reorder_level'] }} |
@@ -26,6 +26,6 @@
 @endif
 
 <x-mail::button :url="route('dashboard')">
-Open dashboard
+{{ __('Open dashboard') }}
 </x-mail::button>
 </x-mail::message>

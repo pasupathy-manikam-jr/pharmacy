@@ -58,7 +58,7 @@ class Refund extends Model implements EInvoiceable
         /** @var EInvoiceDocument|null $original */
         $original = $this->sale->einvoiceDocuments()->where('status', Status::Valid)->latest('id')->first();
         if (! $original) {
-            throw new EInvoiceException('Only refunds on a sale with a validated e-invoice need a refund note.');
+            throw new EInvoiceException(__('Only refunds on a sale with a validated e-invoice need a refund note.'));
         }
 
         $parts = [];

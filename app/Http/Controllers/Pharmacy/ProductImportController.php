@@ -49,7 +49,7 @@ class ProductImportController extends Controller
         $handle = fopen($request->file('file')->getRealPath(), 'r');
         $header = $handle ? array_map(fn ($h) => strtolower(trim((string) $h, "\u{FEFF} ")), fgetcsv($handle) ?: []) : [];
         if ($missing = array_diff(['name', 'price'], $header)) {
-            throw ValidationException::withMessages(['file' => 'Missing columns: '.implode(', ', $missing).'. Download the template for the expected layout.']);
+            throw ValidationException::withMessages(['file' => __('Missing columns: :columns. Download the template for the expected layout.', ['columns' => implode(', ', $missing)])]);
         }
 
         $rows = [];
@@ -83,7 +83,7 @@ class ProductImportController extends Controller
                 'reorder_level' => ['required', 'integer', 'min:0'],
             ]);
             foreach ($v->errors()->all() as $message) {
-                $errors[] = "Row {$line}: {$message}";
+                $errors[] = __('Row :line: :message', ['line' => $line, 'message' => $message]);
             }
             $rows[] = $row;
         }
@@ -109,7 +109,7 @@ class ProductImportController extends Controller
         });
 
         AuditLog::record('products.imported', null, ['created' => $created, 'updated' => $updated]);
-        Inertia::flash('toast', ['type' => 'success', 'message' => "Imported: {$created} new, {$updated} updated."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Imported: :created new, :updated updated.', ['created' => $created, 'updated' => $updated])]);
 
         return to_route('products.index');
     }

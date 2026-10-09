@@ -59,7 +59,7 @@ class CustomerController extends Controller
     {
         $customer->update($this->validated($request));
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Customer saved.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Customer saved.')]);
 
         return back();
     }
@@ -75,18 +75,18 @@ class CustomerController extends Controller
         ]);
 
         if ($data['amount_sen'] > $customer->balanceSen()) {
-            throw ValidationException::withMessages(['amount_sen' => 'That is more than the customer owes.']);
+            throw ValidationException::withMessages(['amount_sen' => __('That is more than the customer owes.')]);
         }
 
         $shift = Shift::openFor($user);
         if ($data['method'] === 'cash' && ! $shift) {
-            throw ValidationException::withMessages(['method' => 'Open a shift to take cash.']);
+            throw ValidationException::withMessages(['method' => __('Open a shift to take cash.')]);
         }
 
         $payment = CustomerPayment::query()->create([...$data, 'customer_id' => $customer->id, 'branch_id' => $user->branch_id, 'shift_id' => $shift?->id, 'user_id' => $user->id]);
         AuditLog::record('customer.payment', $customer, ['amount_sen' => $payment->amount_sen, 'method' => $payment->method]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Payment recorded.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Payment recorded.')]);
 
         return back();
     }

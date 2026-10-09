@@ -49,13 +49,15 @@ const statusTone = {
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Goods received"
-            description="Each delivery adds batches with their expiry dates."
+            :title="$t('Goods received')"
+            :description="
+                $t('Each delivery adds batches with their expiry dates.')
+            "
             :icon="ClipboardList"
             tone="bg-lime-100 text-lime-700 dark:bg-lime-500/20 dark:text-lime-300"
         >
             <Button as-child class="bg-lime-600 hover:bg-lime-700">
-                <Link :href="create()"><Plus /> Receive stock</Link>
+                <Link :href="create()"><Plus /> {{ $t('Receive stock') }}</Link>
             </Button>
         </PageHeader>
 
@@ -63,25 +65,27 @@ const statusTone = {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="received_on" :sort="sort"
-                            >Received</SortableHead
-                        >
-                        <SortableHead name="supplier" :sort="sort"
-                            >Supplier</SortableHead
-                        >
-                        <SortableHead name="invoice_no" :sort="sort"
-                            >Invoice</SortableHead
-                        >
-                        <TableHead class="text-right">Lines</TableHead>
+                        <SortableHead name="received_on" :sort="sort">{{
+                            $t('Received')
+                        }}</SortableHead>
+                        <SortableHead name="supplier" :sort="sort">{{
+                            $t('Supplier')
+                        }}</SortableHead>
+                        <SortableHead name="invoice_no" :sort="sort">{{
+                            $t('Invoice')
+                        }}</SortableHead>
+                        <TableHead class="text-right">{{
+                            $t('Lines')
+                        }}</TableHead>
                         <SortableHead
                             name="total_sen"
                             :sort="sort"
                             align="right"
-                            >Total</SortableHead
+                            >{{ $t('Total') }}</SortableHead
                         >
-                        <SortableHead name="payment_status" :sort="sort"
-                            >Payment</SortableHead
-                        >
+                        <SortableHead name="payment_status" :sort="sort">{{
+                            $t('Payment')
+                        }}</SortableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -89,7 +93,7 @@ const statusTone = {
                         <TableCell
                             colspan="6"
                             class="py-10 text-center text-muted-foreground"
-                            >No deliveries recorded yet.</TableCell
+                            >{{ $t('No deliveries recorded yet.') }}</TableCell
                         >
                     </TableRow>
                     <TableRow v-for="r in receipts.data" :key="r.id">
@@ -110,7 +114,7 @@ const statusTone = {
                                     'rounded-full px-2 py-0.5 text-sm font-medium capitalize',
                                     statusTone[r.payment_status],
                                 ]"
-                                >{{ r.payment_status }}</span
+                                >{{ $t(r.payment_status) }}</span
                             >
                         </TableCell>
                     </TableRow>

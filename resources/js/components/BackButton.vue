@@ -13,6 +13,8 @@ defineProps<{
 
 <template>
     <Button variant="outline" class="no-print" as-child>
-        <Link :href="href"><ArrowLeft /> Back to {{ label }}</Link>
+        <Link :href="href"
+            ><ArrowLeft /> {{ $t('Back to :place', { place: label }) }}</Link
+        >
     </Button>
 </template>

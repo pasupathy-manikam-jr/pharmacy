@@ -85,7 +85,7 @@ class EInvoiceController extends Controller
         )->recalculate();
 
         if ($batch->sale_count === 0) {
-            return $this->toast('error', "No walk-in sales left to consolidate for {$period}.");
+            return $this->toast('error', __('No walk-in sales left to consolidate for :period.', ['period' => $period]));
         }
 
         return $this->send($batch);
@@ -98,7 +98,7 @@ class EInvoiceController extends Controller
         } catch (Throwable $e) {
             report($e);
 
-            return $this->toast('error', 'Could not reach LHDN. Try again in a few minutes.');
+            return $this->toast('error', __('Could not reach LHDN. Try again in a few minutes.'));
         }
 
         return back();
@@ -116,7 +116,7 @@ class EInvoiceController extends Controller
 
         AuditLog::record('einvoice.cancelled', $einvoice, ['reason' => $reason]);
 
-        return $this->toast('success', 'Cancellation sent to LHDN.');
+        return $this->toast('success', __('Cancellation sent to LHDN.'));
     }
 
     public function saveSettings(Request $request): RedirectResponse
@@ -125,7 +125,7 @@ class EInvoiceController extends Controller
         $user = $request->user();
         $tin = $user->branch?->tin;
         if (! $tin) {
-            return $this->toast('error', 'Enter the company TIN under Branches first.');
+            return $this->toast('error', __('Enter the company TIN under Branches first.'));
         }
 
         $data = $request->validate([
@@ -143,14 +143,14 @@ class EInvoiceController extends Controller
         $setting->unsigned = $data['environment'] === 'sandbox' && ($data['unsigned'] ?? false);
 
         if (! $setting->client_id || ! $setting->client_secret) {
-            throw ValidationException::withMessages(['client_id' => 'Client ID and secret are required.']);
+            throw ValidationException::withMessages(['client_id' => __('Client ID and secret are required.')]);
         }
 
         $setting->save();
         $setting->activate();
         AuditLog::record('einvoice.settings_saved', null, ['environment' => $data['environment']]);
 
-        return $this->toast('success', 'MyInvois settings saved.');
+        return $this->toast('success', __('MyInvois settings saved.'));
     }
 
     private function send(Model&EInvoiceable $model): RedirectResponse
@@ -158,18 +158,18 @@ class EInvoiceController extends Controller
         try {
             $this->einvoice->submit($model);
         } catch (ValidationException $e) {
-            return $this->toast('error', 'LHDN needs more details: '.implode(' ', $e->errors()['einvoice'] ?? []));
+            return $this->toast('error', __('LHDN needs more details: :errors', ['errors' => implode(' ', $e->errors()['einvoice'] ?? [])]));
         } catch (EInvoiceException $e) {
             return $this->toast('error', $e->getMessage());
         } catch (Throwable $e) {
             report($e);
 
-            return $this->toast('error', 'Could not reach LHDN. Try sending again in a few minutes.');
+            return $this->toast('error', __('Could not reach LHDN. Try sending again in a few minutes.'));
         }
 
         AuditLog::record('einvoice.submitted', $model);
 
-        return $this->toast('success', 'Sent to LHDN. Use “Check status” if it still shows submitted.');
+        return $this->toast('success', __('Sent to LHDN. Use “Check status” if it still shows submitted.'));
     }
 
     private function toast(string $type, string $message): RedirectResponse

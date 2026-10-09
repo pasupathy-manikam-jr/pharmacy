@@ -49,7 +49,11 @@ const value = computed({
                 "
             >
                 <CalendarIcon class="size-4 text-primary" />
-                {{ model ? formatDate(model) : (placeholder ?? 'Pick a date') }}
+                {{
+                    model
+                        ? formatDate(model)
+                        : (placeholder ?? $t('Pick a date'))
+                }}
             </Button>
         </PopoverTrigger>
         <PopoverContent class="w-auto p-0" align="start">

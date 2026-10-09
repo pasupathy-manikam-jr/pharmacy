@@ -59,7 +59,7 @@ function choose(value: T) {
                 "
             >
                 <span class="truncate">{{
-                    selected?.label ?? placeholder ?? 'Select…'
+                    selected?.label ?? placeholder ?? $t('Select…')
                 }}</span>
                 <ChevronsUpDown class="size-4 shrink-0 opacity-50" />
             </Button>
@@ -69,10 +69,12 @@ function choose(value: T) {
             align="start"
         >
             <Command>
-                <CommandInput :placeholder="searchPlaceholder ?? 'Search…'" />
+                <CommandInput
+                    :placeholder="searchPlaceholder ?? $t('Search…')"
+                />
                 <CommandList>
                     <CommandEmpty>{{
-                        emptyText ?? 'No results.'
+                        emptyText ?? $t('No results.')
                     }}</CommandEmpty>
                     <CommandGroup>
                         <CommandItem
@@ -91,7 +93,7 @@ function choose(value: T) {
                                     )
                                 "
                             />
-                            <span class="truncate">{{ o.label }}</span>
+                            <span class="truncate">{{ $t(o.label) }}</span>
                             <span
                                 v-if="o.hint"
                                 class="ml-auto text-xs text-muted-foreground"

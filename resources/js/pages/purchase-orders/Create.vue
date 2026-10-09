@@ -88,11 +88,14 @@ const submit = () =>
     >
         <PageHeader
             :back="{ href: index(), label: 'purchase orders' }"
-            title="New purchase order"
+            :title="$t('New purchase order')"
             :description="
                 suggested.length
-                    ? `Started with the ${suggested.length} products at or below their reorder level.`
-                    : 'Add the products you want to order.'
+                    ? $t(
+                          'Started with the :count products at or below their reorder level.',
+                          { count: suggested.length },
+                      )
+                    : $t('Add the products you want to order.')
             "
             :icon="ShoppingCart"
             tone="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
@@ -100,25 +103,25 @@ const submit = () =>
 
         <div class="grid gap-4 rounded-xl border bg-card p-5 sm:grid-cols-3">
             <div class="grid gap-1.5">
-                <Label for="supplier">Supplier</Label>
+                <Label for="supplier">{{ $t('Supplier') }}</Label>
                 <Combobox
                     id="supplier"
                     v-model="form.supplier_id"
                     :options="supplierOptions"
-                    placeholder="Choose supplier"
+                    :placeholder="$t('Choose supplier')"
                 />
                 <InputError :message="form.errors.supplier_id" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="expected">Expected delivery</Label>
+                <Label for="expected">{{ $t('Expected delivery') }}</Label>
                 <DatePicker
                     id="expected"
                     v-model="form.expected_on"
-                    placeholder="Optional"
+                    :placeholder="$t('Optional')"
                 />
             </div>
             <div class="grid gap-1.5">
-                <Label for="note">Note to supplier</Label>
+                <Label for="note">{{ $t('Note to supplier') }}</Label>
                 <Input id="note" v-model="form.note" />
             </div>
         </div>
@@ -127,7 +130,9 @@ const submit = () =>
             <div
                 class="hidden grid-cols-[2fr_0.6fr_0.8fr_auto] gap-3 pb-2 text-sm font-medium text-muted-foreground md:grid"
             >
-                <span>Product</span><span>Qty</span><span>Unit cost (RM)</span
+                <span>{{ $t('Product') }}</span
+                ><span>{{ $t('Qty') }}</span
+                ><span>{{ $t('Unit cost (RM)') }}</span
                 ><span class="w-9" />
             </div>
             <div
@@ -139,7 +144,7 @@ const submit = () =>
                     <Combobox
                         v-model="line.product_id"
                         :options="productOptions"
-                        placeholder="Choose product"
+                        :placeholder="$t('Choose product')"
                     />
                     <InputError :message="err(i, 'product_id')" />
                 </div>
@@ -164,7 +169,7 @@ const submit = () =>
                     variant="ghost"
                     size="icon"
                     :disabled="form.lines.length === 1"
-                    aria-label="Remove line"
+                    :aria-label="$t('Remove line')"
                     @click="form.lines.splice(i, 1)"
                     ><Trash2 class="text-rose-500"
                 /></Button>
@@ -177,11 +182,11 @@ const submit = () =>
                     type="button"
                     variant="outline"
                     @click="form.lines.push(blank())"
-                    ><Plus /> Add line</Button
+                    ><Plus /> {{ $t('Add line') }}</Button
                 >
                 <div class="flex items-center gap-4">
                     <span class="text-muted-foreground"
-                        >Total
+                        >{{ $t('Total') }}
                         <b
                             class="tabular font-display text-xl text-foreground"
                             >{{ rm(total) }}</b
@@ -190,7 +195,7 @@ const submit = () =>
                     <Button
                         :disabled="form.processing"
                         class="bg-blue-600 hover:bg-blue-700"
-                        >Save order</Button
+                        >{{ $t('Save order') }}</Button
                     >
                 </div>
             </div>

@@ -114,8 +114,12 @@ const tone = (days: number) =>
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="Stock on hand"
-            description="By batch, soonest expiry first. Sales take from the top of each product."
+            :title="$t('Stock on hand')"
+            :description="
+                $t(
+                    'By batch, soonest expiry first. Sales take from the top of each product.',
+                )
+            "
             :icon="Boxes"
             tone="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300"
         >
@@ -126,7 +130,7 @@ const tone = (days: number) =>
                 <Input
                     v-model="q"
                     class="w-64 pl-8"
-                    placeholder="Product name"
+                    :placeholder="$t('Product name')"
                 />
             </form>
         </PageHeader>
@@ -135,26 +139,29 @@ const tone = (days: number) =>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <SortableHead name="product" :sort="sort"
-                            >Product</SortableHead
-                        >
-                        <SortableHead name="batch_no" :sort="sort"
-                            >Batch</SortableHead
-                        >
-                        <SortableHead name="expiry_date" :sort="sort"
-                            >Expiry</SortableHead
-                        >
-                        <SortableHead name="qty" :sort="sort" align="right"
-                            >On hand</SortableHead
-                        >
-                        <SortableHead name="cost_sen" :sort="sort" align="right"
-                            >Unit cost</SortableHead
+                        <SortableHead name="product" :sort="sort">{{
+                            $t('Product')
+                        }}</SortableHead>
+                        <SortableHead name="batch_no" :sort="sort">{{
+                            $t('Batch')
+                        }}</SortableHead>
+                        <SortableHead name="expiry_date" :sort="sort">{{
+                            $t('Expiry')
+                        }}</SortableHead>
+                        <SortableHead name="qty" :sort="sort" align="right">{{
+                            $t('On hand')
+                        }}</SortableHead>
+                        <SortableHead
+                            name="cost_sen"
+                            :sort="sort"
+                            align="right"
+                            >{{ $t('Unit cost') }}</SortableHead
                         >
                         <SortableHead
                             name="value_sen"
                             :sort="sort"
                             align="right"
-                            >Value</SortableHead
+                            >{{ $t('Value') }}</SortableHead
                         >
                         <TableHead v-if="canAdjust" class="col-action" />
                     </TableRow>
@@ -165,7 +172,11 @@ const tone = (days: number) =>
                             colspan="6"
                             class="py-10 text-center text-muted-foreground"
                         >
-                            No stock yet. Receive goods to add batches.
+                            {{
+                                $t(
+                                    'No stock yet. Receive goods to add batches.',
+                                )
+                            }}
                         </TableCell>
                     </TableRow>
                     <TableRow v-for="l in levels.data" :key="l.id">
@@ -184,7 +195,7 @@ const tone = (days: number) =>
                             >
                                 {{
                                     l.days_left <= 0
-                                        ? 'Expired'
+                                        ? $t('Expired')
                                         : formatDate(l.expiry_date)
                                 }}
                             </span>
@@ -209,7 +220,8 @@ const tone = (days: number) =>
                                 variant="ghost"
                                 size="sm"
                                 @click="startAdjust(l)"
-                                ><SlidersHorizontal /> Adjust</Button
+                                ><SlidersHorizontal />
+                                {{ $t('Adjust') }}</Button
                             >
                         </TableCell>
                     </TableRow>
@@ -224,12 +236,20 @@ const tone = (days: number) =>
         >
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Adjust {{ adjusting?.product }}</DialogTitle>
-                    <DialogDescription
-                        >Batch {{ adjusting?.batch_no }},
-                        {{ adjusting?.qty }} on hand. Every adjustment is logged
-                        with its reason.</DialogDescription
-                    >
+                    <DialogTitle>{{
+                        $t('Adjust :product', {
+                            product: adjusting?.product ?? '',
+                        })
+                    }}</DialogTitle>
+                    <DialogDescription>{{
+                        $t(
+                            'Batch :batch, :qty on hand. Every adjustment is logged with its reason.',
+                            {
+                                batch: adjusting?.batch_no ?? '',
+                                qty: adjusting?.qty ?? 0,
+                            },
+                        )
+                    }}</DialogDescription>
                 </DialogHeader>
                 <form
                     class="grid gap-4"
@@ -237,7 +257,7 @@ const tone = (days: number) =>
                     @submit.prevent="saveAdjust"
                 >
                     <div class="grid gap-1.5">
-                        <Label for="reason">Reason</Label>
+                        <Label for="reason">{{ $t('Reason') }}</Label>
                         <Select v-model="adj.reason">
                             <SelectTrigger id="reason" class="w-full"
                                 ><SelectValue
@@ -247,13 +267,15 @@ const tone = (days: number) =>
                                     v-for="(label, key) in reasons"
                                     :key="key"
                                     :value="key"
-                                    >{{ label }}</SelectItem
+                                    >{{ $t(label) }}</SelectItem
                                 >
                             </SelectContent>
                         </Select>
                     </div>
                     <div v-if="adj.reason === 'count'" class="grid gap-1.5">
-                        <Label for="counted">Counted on the shelf</Label>
+                        <Label for="counted">{{
+                            $t('Counted on the shelf')
+                        }}</Label>
                         <Input
                             id="counted"
                             v-model="adj.counted"
@@ -262,7 +284,7 @@ const tone = (days: number) =>
                         <InputError :message="adj.errors.counted" />
                     </div>
                     <div v-else class="grid gap-1.5">
-                        <Label for="qty">Quantity to remove</Label>
+                        <Label for="qty">{{ $t('Quantity to remove') }}</Label>
                         <Input id="qty" v-model="adj.qty" inputmode="numeric" />
                         <InputError
                             :message="
@@ -272,7 +294,7 @@ const tone = (days: number) =>
                         />
                     </div>
                     <div class="grid gap-1.5">
-                        <Label for="note">Note</Label>
+                        <Label for="note">{{ $t('Note') }}</Label>
                         <Input id="note" v-model="adj.note" />
                     </div>
                     <DialogFooter>
@@ -280,12 +302,12 @@ const tone = (days: number) =>
                             type="button"
                             variant="outline"
                             @click="adjusting = null"
-                            >Cancel</Button
+                            >{{ $t('Cancel') }}</Button
                         >
                         <Button
                             :disabled="adj.processing"
                             class="bg-amber-600 hover:bg-amber-700"
-                            >Save adjustment</Button
+                            >{{ $t('Save adjustment') }}</Button
                         >
                     </DialogFooter>
                 </form>

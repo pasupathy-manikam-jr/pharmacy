@@ -18,6 +18,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { intlLocale } from '@/lib/i18n';
 import { formatDateTime, rm } from '@/lib/money';
 import { index as branches } from '@/routes/branches';
 import { index } from '@/routes/einvoice';
@@ -62,7 +63,7 @@ defineProps<{
 }>();
 
 const monthLabel = (p: string) =>
-    new Date(`${p}-01T00:00:00`).toLocaleDateString('en-MY', {
+    new Date(`${p}-01T00:00:00`).toLocaleDateString(intlLocale(), {
         month: 'long',
         year: 'numeric',
     });
@@ -99,24 +100,28 @@ const typeLabel: Record<string, string> = {
 
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <PageHeader
-            title="E-invoices"
-            description="LHDN MyInvois. Walk-in sales go out once a month as one consolidated e-invoice."
+            :title="$t('E-invoices')"
+            :description="
+                $t(
+                    'LHDN MyInvois. Walk-in sales go out once a month as one consolidated e-invoice.',
+                )
+            "
             :icon="FileCheck2"
             tone="bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300"
         />
 
         <p v-if="!branch.tin" class="rounded-xl bg-amber-500 p-4 text-white">
-            {{ branch.name }} has no TIN yet.
-            <Link :href="branches()" class="font-semibold underline"
-                >Add it under Branches</Link
-            >
-            to send e-invoices.
+            {{ $t(':branch has no TIN yet.', { branch: branch.name }) }}
+            <Link :href="branches()" class="font-semibold underline">{{
+                $t('Add it under Branches')
+            }}</Link>
+            {{ $t('to send e-invoices.') }}
         </p>
 
         <div class="grid gap-5 xl:grid-cols-[1fr_24rem]">
             <section class="rounded-xl border bg-card">
                 <h2 class="border-b p-4 font-semibold">
-                    Monthly consolidated e-invoices
+                    {{ $t('Monthly consolidated e-invoices') }}
                 </h2>
                 <div
                     v-for="m in months"
@@ -127,10 +132,12 @@ const typeLabel: Record<string, string> = {
                         monthLabel(m.period)
                     }}</span>
                     <template v-if="m.batch">
-                        <span class="text-sm text-muted-foreground"
-                            >{{ m.batch.sale_count }} sales,
-                            {{ rm(m.batch.total_sen) }}</span
-                        >
+                        <span class="text-sm text-muted-foreground">{{
+                            $t(':count sales, :total', {
+                                count: m.batch.sale_count,
+                                total: rm(m.batch.total_sen),
+                            })
+                        }}</span>
                         <div class="ml-auto">
                             <EInvoicePanel :einvoice="m.einvoice" />
                         </div>
@@ -145,20 +152,22 @@ const typeLabel: Record<string, string> = {
                             variant="outline"
                             :disabled="!branch.tin"
                             @click="consolidate(m.period)"
-                            ><Send /> Resend</Button
+                            ><Send /> {{ $t('Resend') }}</Button
                         >
                     </template>
                     <template v-else>
-                        <span class="text-sm text-muted-foreground"
-                            >{{ m.pending_sales }} walk-in sales</span
-                        >
+                        <span class="text-sm text-muted-foreground">{{
+                            $t(':count walk-in sales', {
+                                count: m.pending_sales ?? 0,
+                            })
+                        }}</span>
                         <Button
                             v-if="m.pending_sales"
                             size="sm"
                             class="ml-auto bg-sky-600 hover:bg-sky-700"
                             :disabled="!branch.tin || !settings.length"
                             @click="consolidate(m.period)"
-                            ><Send /> Send consolidated</Button
+                            ><Send /> {{ $t('Send consolidated') }}</Button
                         >
                     </template>
                 </div>
@@ -170,14 +179,22 @@ const typeLabel: Record<string, string> = {
                 @submit.prevent="save"
             >
                 <h2 class="flex items-center gap-2 font-semibold">
-                    <KeyRound class="size-4 text-sky-600" /> MyInvois
-                    credentials
+                    <KeyRound class="size-4 text-sky-600" />
+                    {{ $t('MyInvois credentials') }}
                 </h2>
                 <p class="text-sm text-muted-foreground">
-                    For TIN {{ branch.tin ?? 'not set' }}.
+                    {{
+                        $t('For TIN :tin.', {
+                            tin: branch.tin ?? $t('not set'),
+                        })
+                    }}
                     <template v-for="s in settings" :key="s.id"
-                        ><br />{{ s.environment }}: client {{ s.client_id
-                        }}{{ s.active ? ' (in use)' : '' }}</template
+                        ><br />{{
+                            $t(':environment: client :client', {
+                                environment: $t(s.environment),
+                                client: s.client_id,
+                            })
+                        }}{{ s.active ? ` ${$t('(in use)')}` : '' }}</template
                     >
                 </p>
                 <Select v-model="form.environment">
@@ -185,57 +202,57 @@ const typeLabel: Record<string, string> = {
                         ><SelectValue
                     /></SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="sandbox"
-                            >Sandbox (testing)</SelectItem
-                        >
-                        <SelectItem value="production"
-                            >Production (live)</SelectItem
-                        >
+                        <SelectItem value="sandbox">{{
+                            $t('Sandbox (testing)')
+                        }}</SelectItem>
+                        <SelectItem value="production">{{
+                            $t('Production (live)')
+                        }}</SelectItem>
                     </SelectContent>
                 </Select>
                 <Input
                     v-model="form.client_id"
-                    placeholder="Client ID"
+                    :placeholder="$t('Client ID')"
                     autocomplete="off"
                 />
                 <InputError :message="form.errors.client_id" />
                 <Input
                     v-model="form.client_secret"
                     type="password"
-                    placeholder="Client secret (blank keeps saved)"
+                    :placeholder="$t('Client secret (blank keeps saved)')"
                     autocomplete="new-password"
                 />
                 <Textarea
                     v-model="form.certificate"
                     rows="3"
-                    placeholder="Certificate PEM (blank keeps saved)"
+                    :placeholder="$t('Certificate PEM (blank keeps saved)')"
                 />
                 <Textarea
                     v-model="form.private_key"
                     rows="3"
-                    placeholder="Private key PEM (blank keeps saved)"
+                    :placeholder="$t('Private key PEM (blank keeps saved)')"
                 />
                 <div
                     v-if="form.environment === 'sandbox'"
                     class="flex items-center gap-2"
                 >
                     <Checkbox id="unsigned" v-model="form.unsigned" />
-                    <Label for="unsigned" class="font-normal"
-                        >Send unsigned (sandbox, no certificate yet)</Label
-                    >
+                    <Label for="unsigned" class="font-normal">{{
+                        $t('Send unsigned (sandbox, no certificate yet)')
+                    }}</Label>
                 </div>
                 <Button
                     :disabled="form.processing || !branch.tin"
                     class="bg-sky-600 hover:bg-sky-700"
-                    >Save and use these</Button
+                    >{{ $t('Save and use these') }}</Button
                 >
             </form>
         </div>
 
         <section class="rounded-xl border bg-card p-4">
-            <h2 class="mb-2 font-semibold">Recent e-invoices</h2>
+            <h2 class="mb-2 font-semibold">{{ $t('Recent e-invoices') }}</h2>
             <p v-if="!recent.length" class="text-sm text-muted-foreground">
-                Nothing sent yet.
+                {{ $t('Nothing sent yet.') }}
             </p>
             <div
                 v-for="d in recent"
@@ -245,7 +262,7 @@ const typeLabel: Record<string, string> = {
                 <span class="font-medium">{{ d.number }}</span>
                 <span>{{ typeLabel[d.type] ?? d.type }}</span>
                 <span class="capitalize"
-                    >{{ d.status }}
+                    >{{ $t(d.status) }}
                     <span class="text-muted-foreground">{{
                         d.environment
                     }}</span></span

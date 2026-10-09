@@ -122,11 +122,14 @@ function submit() {
     >
         <PageHeader
             :back="{ href: index(), label: 'goods received' }"
-            title="Receive stock"
+            :title="$t('Receive stock')"
             :description="
                 order
-                    ? `Against ${order.number}. Enter each batch exactly as printed on the box.`
-                    : 'Enter each batch exactly as printed on the box.'
+                    ? $t(
+                          'Against :number. Enter each batch exactly as printed on the box.',
+                          { number: order.number },
+                      )
+                    : $t('Enter each batch exactly as printed on the box.')
             "
             :icon="ClipboardList"
             tone="bg-lime-100 text-lime-700 dark:bg-lime-500/20 dark:text-lime-300"
@@ -134,36 +137,42 @@ function submit() {
 
         <div class="grid gap-4 rounded-xl border bg-card p-5 sm:grid-cols-4">
             <div class="grid gap-1.5">
-                <Label for="supplier">Supplier</Label>
+                <Label for="supplier">{{ $t('Supplier') }}</Label>
                 <Combobox
                     id="supplier"
                     v-model="form.supplier_id"
                     :options="supplierOptions"
-                    placeholder="Choose supplier"
-                    search-placeholder="Search suppliers"
-                    empty-text="No supplier found. Add one under Suppliers."
+                    :placeholder="$t('Choose supplier')"
+                    :search-placeholder="$t('Search suppliers')"
+                    :empty-text="
+                        $t('No supplier found. Add one under Suppliers.')
+                    "
                 />
                 <InputError :message="form.errors.supplier_id" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="invoice_no">Supplier invoice no.</Label>
+                <Label for="invoice_no">{{ $t('Supplier invoice no.') }}</Label>
                 <Input id="invoice_no" v-model="form.invoice_no" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="received_on">Received on</Label>
+                <Label for="received_on">{{ $t('Received on') }}</Label>
                 <DatePicker id="received_on" v-model="form.received_on" />
                 <InputError :message="form.errors.received_on" />
             </div>
             <div class="grid gap-1.5">
-                <Label for="payment_status">Payment</Label>
+                <Label for="payment_status">{{ $t('Payment') }}</Label>
                 <Select v-model="form.payment_status">
                     <SelectTrigger id="payment_status" class="w-full"
                         ><SelectValue
                     /></SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="pending">Not paid yet</SelectItem>
-                        <SelectItem value="partial">Partly paid</SelectItem>
-                        <SelectItem value="paid">Paid</SelectItem>
+                        <SelectItem value="pending">{{
+                            $t('Not paid yet')
+                        }}</SelectItem>
+                        <SelectItem value="partial">{{
+                            $t('Partly paid')
+                        }}</SelectItem>
+                        <SelectItem value="paid">{{ $t('Paid') }}</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -173,8 +182,12 @@ function submit() {
             <div
                 class="hidden grid-cols-[2fr_1fr_1fr_0.6fr_0.8fr_auto] gap-3 pb-2 text-sm font-medium text-muted-foreground md:grid"
             >
-                <span>Product</span><span>Batch no.</span><span>Expiry</span
-                ><span>Qty</span><span>Unit cost (RM)</span><span class="w-9" />
+                <span>{{ $t('Product') }}</span
+                ><span>{{ $t('Batch no.') }}</span
+                ><span>{{ $t('Expiry') }}</span
+                ><span>{{ $t('Qty') }}</span
+                ><span>{{ $t('Unit cost (RM)') }}</span
+                ><span class="w-9" />
             </div>
             <div
                 v-for="(line, i) in form.lines"
@@ -185,19 +198,22 @@ function submit() {
                     <Combobox
                         v-model="line.product_id"
                         :options="productOptions"
-                        placeholder="Choose product"
-                        search-placeholder="Name or barcode"
+                        :placeholder="$t('Choose product')"
+                        :search-placeholder="$t('Name or barcode')"
                     />
                     <InputError :message="err(i, 'product_id')" />
                 </div>
                 <div>
-                    <Input v-model="line.batch_no" placeholder="Batch no." />
+                    <Input
+                        v-model="line.batch_no"
+                        :placeholder="$t('Batch no.')"
+                    />
                     <InputError :message="err(i, 'batch_no')" />
                 </div>
                 <div>
                     <DatePicker
                         v-model="line.expiry_date"
-                        placeholder="Expiry"
+                        :placeholder="$t('Expiry')"
                     />
                     <InputError :message="err(i, 'expiry_date')" />
                 </div>
@@ -222,7 +238,7 @@ function submit() {
                     variant="ghost"
                     size="icon"
                     :disabled="form.lines.length === 1"
-                    aria-label="Remove line"
+                    :aria-label="$t('Remove line')"
                     @click="form.lines.splice(i, 1)"
                 >
                     <Trash2 class="text-rose-500" />
@@ -236,11 +252,11 @@ function submit() {
                     type="button"
                     variant="outline"
                     @click="form.lines.push(blank())"
-                    ><Plus /> Add line</Button
+                    ><Plus /> {{ $t('Add line') }}</Button
                 >
                 <div class="flex items-center gap-4">
                     <span class="text-muted-foreground"
-                        >Total
+                        >{{ $t('Total') }}
                         <b
                             class="tabular font-display text-xl text-foreground"
                             >{{ rm(total) }}</b
@@ -249,7 +265,7 @@ function submit() {
                     <Button
                         :disabled="form.processing"
                         class="bg-lime-600 hover:bg-lime-700"
-                        >Receive stock</Button
+                        >{{ $t('Receive stock') }}</Button
                     >
                 </div>
             </div>

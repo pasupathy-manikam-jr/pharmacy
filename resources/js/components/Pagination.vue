@@ -33,7 +33,7 @@ function resize(value: unknown) {
         class="no-print flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"
     >
         <div class="flex flex-wrap items-center gap-2">
-            <span>Rows per page</span>
+            <span>{{ $t('Rows per page') }}</span>
             <Select
                 :model-value="String(page.per_page)"
                 @update:model-value="resize"
@@ -41,7 +41,7 @@ function resize(value: unknown) {
                 <SelectTrigger
                     size="sm"
                     class="w-20"
-                    aria-label="Rows per page"
+                    :aria-label="$t('Rows per page')"
                 >
                     <SelectValue />
                 </SelectTrigger>
@@ -54,15 +54,18 @@ function resize(value: unknown) {
                     >
                 </SelectContent>
             </Select>
-            <span class="ml-2"
-                >Showing {{ page.from }} to {{ page.to }} of
-                {{ page.total }} results</span
-            >
+            <span class="ml-2">{{
+                $t('Showing :from to :to of :total results', {
+                    from: page.from ?? 0,
+                    to: page.to ?? 0,
+                    total: page.total,
+                })
+            }}</span>
         </div>
         <nav
             v-if="page.last_page > 1"
             class="flex flex-wrap gap-1"
-            aria-label="Pages"
+            :aria-label="$t('Pages')"
         >
             <Button
                 variant="outline"
@@ -70,9 +73,9 @@ function resize(value: unknown) {
                 :disabled="!page.prev_page_url"
                 as-child
             >
-                <Link :href="page.prev_page_url ?? '#'" preserve-scroll
-                    >Previous</Link
-                >
+                <Link :href="page.prev_page_url ?? '#'" preserve-scroll>{{
+                    $t('Previous')
+                }}</Link>
             </Button>
             <template v-for="(link, i) in page.links.slice(1, -1)" :key="i">
                 <span v-if="!link.url" class="px-2 py-1">…</span>
@@ -95,9 +98,9 @@ function resize(value: unknown) {
                 :disabled="!page.next_page_url"
                 as-child
             >
-                <Link :href="page.next_page_url ?? '#'" preserve-scroll
-                    >Next</Link
-                >
+                <Link :href="page.next_page_url ?? '#'" preserve-scroll>{{
+                    $t('Next')
+                }}</Link>
             </Button>
         </nav>
     </div>
