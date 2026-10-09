@@ -8,6 +8,7 @@ import { useViewMode } from '@/composables/useViewMode';
 import PageHeader from '@/components/PageHeader.vue';
 import SortableHead from '@/components/SortableHead.vue';
 import PoisonBadge from '@/components/PoisonBadge.vue';
+import ProductImage from '@/components/ProductImage.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -132,10 +133,19 @@ const submit = () =>
                         :class="!p.is_active && 'opacity-50'"
                     >
                         <TableCell class="font-medium">
-                            {{ p.name }}
-                            <span class="text-muted-foreground"
-                                >{{ p.strength }} {{ p.form }}</span
-                            >
+                            <div class="flex items-center gap-3">
+                                <ProductImage
+                                    :src="p.image_url"
+                                    :alt="p.name"
+                                    class="size-10 rounded-md border"
+                                />
+                                <div>
+                                    {{ p.name }}
+                                    <span class="text-muted-foreground"
+                                        >{{ p.strength }} {{ p.form }}</span
+                                    >
+                                </div>
+                            </div>
                         </TableCell>
                         <TableCell class="text-muted-foreground">{{
                             p.generic_name
@@ -186,9 +196,14 @@ const submit = () =>
             >
                 <span
                     :class="[
-                        'absolute inset-x-0 top-0 h-1.5',
+                        'absolute inset-x-0 top-0 z-10 h-1.5',
                         band[p.poison_group],
                     ]"
+                />
+                <ProductImage
+                    :src="p.image_url"
+                    :alt="p.name"
+                    class="aspect-[4/3] w-full border-b bg-white dark:bg-white/5"
                 />
                 <div class="flex flex-1 flex-col gap-1 p-4">
                     <div class="flex items-start justify-between gap-2">

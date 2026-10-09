@@ -34,6 +34,9 @@ git reset --hard origin/deploy
 echo "==> Installing PHP dependencies"
 composer install --no-interaction --no-progress --optimize-autoloader
 
+echo "==> Linking public storage (product images)"
+php artisan storage:link >/dev/null 2>&1 || true
+
 echo "==> Migrating"
 php artisan migrate --force
 

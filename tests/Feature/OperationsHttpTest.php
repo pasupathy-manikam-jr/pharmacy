@@ -19,6 +19,7 @@ use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class OperationsHttpTest extends TestCase
@@ -193,6 +194,26 @@ class OperationsHttpTest extends TestCase
         foreach (['sales.index' => 'total_sen', 'receipts.index' => 'supplier', 'purchase-orders.index' => 'total_sen', 'prescriptions.index' => 'patient', 'shifts.index' => 'variance', 'audit.index' => 'user', 'stock.movements' => 'qty_delta', 'customers.index' => 'dob', 'suppliers.index' => 'tin'] as $route => $column) {
             $this->get(route($route, ['sort' => $column, 'dir' => 'desc']))->assertOk()->assertInertia(fn ($p) => $p->where('sort.sort', $column));
         }
+    }
+
+    public function test_product_image_upload_replace_and_remove(): void
+    {
+        Storage::fake('public');
+        $product = $this->product('Panadol');
+        $fields = ['name' => 'Panadol', 'poison_group' => 'none', 'unit' => 'tablet', 'price_sen' => 30, 'tax_rate_bp' => 0, 'reorder_level' => 100, 'is_active' => true];
+
+        $this->put(route('products.update', $product), [...$fields, 'image' => UploadedFile::fake()->image('a.png', 400, 300)])->assertSessionHasNoErrors();
+        $first = (string) $product->fresh()?->image_path;
+        Storage::disk('public')->assertExists($first);
+        $this->assertStringContainsString('/storage/products/', (string) $product->fresh()?->image_url);
+
+        $this->put(route('products.update', $product), [...$fields, 'image' => UploadedFile::fake()->image('b.jpg')])->assertSessionHasNoErrors();
+        Storage::disk('public')->assertMissing($first);
+
+        $this->put(route('products.update', $product), [...$fields, 'image' => UploadedFile::fake()->create('evil.svg', 5, 'image/svg+xml')])->assertSessionHasErrors('image');
+
+        $this->put(route('products.update', $product), [...$fields, 'remove_image' => true])->assertSessionHasNoErrors();
+        $this->assertNull($product->fresh()?->image_path);
     }
 
     public function test_goods_receipt_listing_still_works(): void

@@ -18,6 +18,7 @@ import DatePicker from '@/components/DatePicker.vue';
 import InputError from '@/components/InputError.vue';
 import OpenShiftForm from '@/components/OpenShiftForm.vue';
 import PoisonBadge from '@/components/PoisonBadge.vue';
+import ProductImage from '@/components/ProductImage.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,6 +39,7 @@ type PosProduct = {
     price_sen: number;
     tax_rate_bp: number;
     poison_group: PoisonGroup;
+    image_url: string | null;
     on_hand: number | string;
 };
 type PosCustomer = {
@@ -277,6 +279,11 @@ function charge() {
                         :disabled="Number(p.on_hand) <= 0"
                         @click="add(p)"
                     >
+                        <ProductImage
+                            :src="p.image_url"
+                            :alt="p.name"
+                            class="size-11 rounded-md border bg-white"
+                        />
                         <div class="flex-1">
                             <p class="font-medium">
                                 {{ p.name }}

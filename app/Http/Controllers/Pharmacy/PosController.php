@@ -6,6 +6,7 @@ use App\Actions\Pharmacy\CompleteSale;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Prescription;
+use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Shift;
 use App\Models\User;
@@ -27,13 +28,14 @@ class PosController extends Controller
             ->leftJoin('batches', fn ($j) => $j->on('batches.product_id', '=', 'products.id')->whereDate('batches.expiry_date', '>', today()))
             ->leftJoin('stock_levels', fn ($j) => $j->on('stock_levels.batch_id', '=', 'batches.id')->where('stock_levels.branch_id', $branchId))
             ->where('products.is_active', true)
-            ->groupBy('products.id', 'products.name', 'products.generic_name', 'products.strength', 'products.barcode', 'products.price_sen', 'products.tax_rate_bp', 'products.poison_group')
+            ->groupBy('products.id', 'products.name', 'products.generic_name', 'products.strength', 'products.barcode', 'products.price_sen', 'products.tax_rate_bp', 'products.poison_group', 'products.image_path')
             ->orderBy('products.name')
             ->get([
                 'products.id', 'products.name', 'products.generic_name', 'products.strength', 'products.barcode',
-                'products.price_sen', 'products.tax_rate_bp', 'products.poison_group',
+                'products.price_sen', 'products.tax_rate_bp', 'products.poison_group', 'products.image_path',
                 DB::raw('COALESCE(SUM(stock_levels.qty), 0) as on_hand'),
-            ]);
+            ])
+            ->map(fn ($p) => [...(array) $p, 'image_url' => Product::urlFor($p->image_path)]);
 
         /** @var User $user */
         $user = $request->user();

@@ -27,6 +27,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -69,6 +70,7 @@ class DemoHistorySeeder extends Seeder
         ]))->merge(Customer::query()->get());
 
         $products = Product::query()->get()->keyBy('name');
+        $products->each(fn (Product $p) => $this->packshot($p));
         $everyday = $products->filter(fn (Product $p) => $p->poison_group === PoisonGroup::None)->values();
         $pharmacyOnly = $products->filter(fn (Product $p) => in_array($p->poison_group, [PoisonGroup::C, PoisonGroup::D], true))->values();
         $prescription = $products->filter(fn (Product $p) => $p->poison_group->requiresPrescription())->values();
@@ -203,6 +205,43 @@ class DemoHistorySeeder extends Seeder
 
         Carbon::setTestNow();
         Auth::logout();
+    }
+
+    /**
+     * A simple carton illustration for the demo catalogue, tinted by poison class.
+     */
+    private function packshot(Product $product): void
+    {
+        [$band, $tint] = match ($product->poison_group) {
+            PoisonGroup::None => ['#059669', '#ecfdf5'],
+            PoisonGroup::B => ['#e11d48', '#fff1f2'],
+            PoisonGroup::C => ['#ea580c', '#fff7ed'],
+            PoisonGroup::D => ['#d97706', '#fffbeb'],
+            PoisonGroup::Psychotropic => ['#c026d3', '#fdf4ff'],
+            PoisonGroup::Dda => ['#dc2626', '#fef2f2'],
+        };
+        $e = fn (?string $text) => htmlspecialchars((string) $text, ENT_XML1);
+        $name = $e(mb_strimwidth($product->name, 0, 22, '…'));
+        $sub = $e(trim(($product->strength ?? '').' '.($product->form ?? '')));
+        $generic = $e(mb_strimwidth((string) $product->generic_name, 0, 30, '…'));
+
+        $svg = <<<SVG
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+          <rect width="400" height="300" fill="#ffffff"/>
+          <polygon points="90,70 290,70 330,40 130,40" fill="{$tint}" stroke="{$band}" stroke-width="2"/>
+          <polygon points="290,70 330,40 330,230 290,260" fill="{$band}" opacity="0.85"/>
+          <rect x="90" y="70" width="200" height="190" rx="4" fill="{$tint}" stroke="{$band}" stroke-width="2"/>
+          <rect x="90" y="70" width="200" height="34" fill="{$band}"/>
+          <text x="190" y="93" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">{$name}</text>
+          <text x="190" y="150" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a" text-anchor="middle">{$sub}</text>
+          <text x="190" y="180" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#475569" text-anchor="middle">{$generic}</text>
+          <path d="M175 215 h10 v-10 h10 v10 h10 v10 h-10 v10 h-10 v-10 h-10 z" fill="{$band}"/>
+        </svg>
+        SVG;
+
+        $path = "products/demo-{$product->id}.svg";
+        Storage::disk('public')->put($path, $svg);
+        $product->update(['image_path' => $path]);
     }
 
     /**

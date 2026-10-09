@@ -22,6 +22,7 @@ export type Product = {
     poison_group: PoisonGroup;
     barcode: string | null;
     mal_reg_no: string | null;
+    image_url: string | null;
     unit: string;
     price_sen: number;
     tax_rate_bp: number;

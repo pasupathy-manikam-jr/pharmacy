@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import { Pill } from '@lucide/vue';
+import { computed, ref } from 'vue';
+import { ImageUp, Pill, Trash2 } from '@lucide/vue';
 import ProductController from '@/actions/App/Http/Controllers/Pharmacy/ProductController';
 import InputError from '@/components/InputError.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import ProductImage from '@/components/ProductImage.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -52,24 +53,49 @@ const form = useForm({
     tax_rate: p ? String(p.tax_rate_bp / 100) : '0',
     reorder_level: String(p?.reorder_level ?? 0),
     is_active: p?.is_active ?? true,
+    image: null as File | null,
+    remove_image: false,
 });
+
+// What the picture area shows: a newly chosen file, else the saved image unless it's being removed.
+const chosenUrl = ref<string | null>(null);
+const preview = computed(
+    () =>
+        chosenUrl.value ?? (form.remove_image ? null : (p?.image_url ?? null)),
+);
+
+function pick(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0] ?? null;
+    form.image = file;
+    form.remove_image = false;
+    if (chosenUrl.value) URL.revokeObjectURL(chosenUrl.value);
+    chosenUrl.value = file ? URL.createObjectURL(file) : null;
+}
+
+function clearImage() {
+    form.image = null;
+    form.remove_image = true;
+    if (chosenUrl.value) URL.revokeObjectURL(chosenUrl.value);
+    chosenUrl.value = null;
+}
 
 // Server validates the transformed field names (price_sen, tax_rate_bp).
 const errors = computed(() => form.errors as Record<string, string>);
 
 function submit() {
+    // Multipart for the image; updates spoof PUT because browsers can't send files with it.
     form.transform(({ price, tax_rate, reorder_level, ...rest }) => ({
         ...rest,
+        ...(p ? { _method: 'put' } : {}),
         price_sen: toSen(price),
         tax_rate_bp: Math.round(Number.parseFloat(tax_rate || '0') * 100),
         reorder_level: Number.parseInt(reorder_level || '0', 10),
     }));
 
-    if (p) {
-        form.put(ProductController.update.url(p.id));
-    } else {
-        form.post(ProductController.store.url());
-    }
+    form.post(
+        p ? ProductController.update.url(p.id) : ProductController.store.url(),
+        { forceFormData: true },
+    );
 }
 </script>
 
@@ -89,6 +115,52 @@ function submit() {
             novalidate
             @submit.prevent="submit"
         >
+            <div class="flex flex-wrap items-center gap-4 sm:col-span-2">
+                <ProductImage
+                    :src="preview"
+                    :alt="form.name || 'Product'"
+                    class="size-28 rounded-xl border bg-white"
+                />
+                <div class="grid gap-2">
+                    <Label for="image">Product photo</Label>
+                    <div class="flex flex-wrap gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            as-child
+                        >
+                            <label for="image" class="cursor-pointer"
+                                ><ImageUp />
+                                {{
+                                    preview ? 'Replace photo' : 'Choose photo'
+                                }}</label
+                            >
+                        </Button>
+                        <Button
+                            v-if="preview"
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            class="text-rose-600"
+                            @click="clearImage"
+                            ><Trash2 /> Remove</Button
+                        >
+                    </div>
+                    <input
+                        id="image"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        class="sr-only"
+                        @change="pick"
+                    />
+                    <p class="text-sm text-muted-foreground">
+                        JPG, PNG or WebP, up to 2 MB. Shown on the POS and
+                        product cards.
+                    </p>
+                    <InputError :message="form.errors.image" />
+                </div>
+            </div>
             <div class="grid gap-2 sm:col-span-2">
                 <Label for="name">Brand / product name</Label>
                 <Input id="name" v-model="form.name" placeholder="Panadol" />

@@ -10,6 +10,7 @@ use App\Support\PerPage;
 use App\Support\Sort;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -42,7 +43,8 @@ class ProductController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        Product::query()->create($this->validated($request));
+        $product = Product::query()->create($this->validated($request));
+        $this->syncImage($request, $product);
 
         return to_route('products.index');
     }
@@ -55,12 +57,38 @@ class ProductController extends Controller
     public function update(Request $request, Product $product): RedirectResponse
     {
         $product->update($this->validated($request, $product));
+        $this->syncImage($request, $product);
 
         if ($changes = array_intersect_key($product->getChanges(), array_flip(['price_sen', 'poison_group', 'tax_rate_bp']))) {
             AuditLog::record('product.updated', $product, $changes);
         }
 
         return to_route('products.index');
+    }
+
+    /**
+     * Store a newly uploaded image (replacing the old file), or remove it when asked.
+     */
+    private function syncImage(Request $request, Product $product): void
+    {
+        $request->validate([
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_image' => ['boolean'],
+        ]);
+
+        $old = $product->image_path;
+
+        if ($file = $request->file('image')) {
+            $product->update(['image_path' => $file->store('products', 'public')]);
+        } elseif ($request->boolean('remove_image')) {
+            $product->update(['image_path' => null]);
+        } else {
+            return;
+        }
+
+        if ($old && $old !== $product->image_path) {
+            Storage::disk('public')->delete($old);
+        }
     }
 
     /**
